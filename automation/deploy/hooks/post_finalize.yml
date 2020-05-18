@@ -20,7 +20,7 @@
   environment: "{{ project_environment }}"
 
 - name: Run artisan migrate
-  shell: cd {{deploy_helper.new_release_path}} && php artisan migrate
+  shell: cd {{deploy_helper.new_release_path}} && php artisan migrate --force
   environment: "{{ project_environment }}"
 
 - name: Clear the opcache
