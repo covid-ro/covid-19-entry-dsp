@@ -104,5 +104,5 @@ project_persistent_environment:
   DB_HOST: "{{ mysql_dbs.covid_entry_dsp_db.db_host }}"
   DB_PORT: 3306
   DB_DATABASE: "{{ mysql_dbs.covid_entry_dsp_db.database }}"
-  DB_USERNAME: "{{ mysql_users.covid_entry_dsp_db.user }}"
+  DB_USERNAME: "{{ mysql_users.covid_web_user.user }}"
   DB_PASSWORD: "{{ mysql_users.covid_web_user.password }}"

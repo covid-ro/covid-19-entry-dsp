@@ -9,7 +9,7 @@
   when: project_persistent_environment|length > 0
   become: true
   become_user: root
-  no_log: false
+  no_log: true
 
 - name: Add fastcgi params
   lineinfile:
@@ -20,4 +20,4 @@
   when: project_persistent_environment|length > 0
   become: true
   become_user: root
-  no_log: false
+  no_log: true
