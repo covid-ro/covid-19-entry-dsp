@@ -34,9 +34,9 @@ class Declaration
      */
     public static function all(string $url, array $params, string $format = null)
     {
-        $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : null ;
-        return Cache::untilUpdated('declarations-' . Auth::user()->username, env('CACHE_DECLARATIONS_PERSISTENCE'),
-            function() use ($url, $params, $format, $user) {
+        $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : 'admin' ;
+//        return Cache::untilUpdated('declarations-' . Auth::user()->username, env('CACHE_DECLARATIONS_PERSISTENCE'),
+//            function() use ($url, $params, $format, $user) {
                 try {
                     $apiRequest = self::connectApi()
                         ->get($url, $params);
@@ -57,8 +57,8 @@ class Declaration
                 } catch(Exception $exception) {
                     return $exception->getMessage();
                 }
-            }
-        );
+//            }
+//        );
     }
 
     /**
@@ -162,8 +162,16 @@ class Declaration
         $formattedDeclarations = [];
 
         foreach ($data as $key => $declaration) {
-            if($user && $declaration['dsp_user_name'] !== $user) {
-                continue;
+            if($user !== 'admin') {
+                if ($user
+                    && !empty($declaration['dsp_user_name'])
+                    || $declaration['dsp_user_name'] === $user
+                    || Auth::user()->checkpoint != $declaration['border_checkpoint']['id']
+                    || empty($declaration['border_crossed_at'])
+                    || empty($declaration['border_validated_at'])
+                ) {
+                    continue;
+                }
             }
 
             $formattedDeclarations[$key]['code'] = $declaration['code'];
