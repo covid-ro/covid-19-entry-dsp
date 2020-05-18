@@ -6,6 +6,7 @@
   roles:
     - ssl-vault
     - nginx
+    - certbot
     - php
     - mysql
     - nodejs

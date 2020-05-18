@@ -52,9 +52,16 @@ mysql_config:
 
 php_fpm_custom_user: true
 
-ssl_vault_selfsigned: true
+ssl_vault_selfsigned: false
 ssl_domains:
   - "covid-dsp.citizennext.ro"
+
+certbot_certs:
+   - email: marius.udubasa@citizennext.ro
+     domains:
+       - covid-dsp.citizennext.ro
+
+certbot_admin_email: marius.udubasa@citizennext.ro
 
 # deploy
 project_root:  /var/www/entry-dsp
