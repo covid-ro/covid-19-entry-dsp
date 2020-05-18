@@ -1,0 +1,30 @@
+---
+- name: Set permissions for the web and deploy users on project writable shared resources
+  shell: |
+    chown -R :www-data {{ item.src }}/ ;
+    find {{ item.src }} -type f -exec chmod g+w {} \;
+    find {{ item.src }} -type d -exec chmod g+ws {} \;
+  args:
+    chdir: "{{ deploy_helper.shared_path }}"
+  with_items: "{{ project_shared_children }}"
+  when: project_change_dirs_config|default(true) and item.writable|default(false)
+  become: yes
+
+- name: Ensure writable resources are present
+  file:
+    path: '{{ deploy_helper.new_release_path }}/{{ item }}'
+    state: directory
+  with_items: "{{ project_writable_resources }}"
+  when: project_change_dirs_config|default(true)
+  become: yes
+
+- name: Set permissions for the web and deploy users on writable resources
+  shell: |
+    chown -R :www-data {{ item }}/ ;
+    find {{ item }} -type f -exec chmod g+w {} \;
+    find {{ item }} -type d -exec chmod g+ws {} \;
+  args:
+    chdir: "{{ deploy_helper.new_release_path }}"
+  with_items: "{{ project_writable_resources }}"
+  when: project_change_dirs_config|default(true)
+  become: yes

@@ -1,0 +1,10 @@
+
+ssl_vault_selfsigned: false
+ssl_selfsigned_country: "RO"
+ssl_selfsigned_state: "Bucharest"
+ssl_selfsigned_locality: "Bucharest"
+ssl_selfsigned_organization: "Citizen Next"
+ssl_selfsigned_organizationalunit: "IT"
+ssl_selfsigned_email: "marius.udubasa@citizennext.ro"
+certificate_key_path: /etc/ssl/{{item.key}}
+certificate_path: /etc/ssl/{{item.key}}

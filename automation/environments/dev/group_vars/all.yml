@@ -1,0 +1,100 @@
+---
+apps:
+  web:
+    docroot: /var/www/entry-dsp
+    public: /var/www/entry-dsp/current/public
+    servername: entry-dsp-dev.citizennext.ro
+    template: web.tpl
+    certificate: "covid-dsp.citizennext.ro"
+    dhparam_path: "/etc/ssl/dhparam.pem"
+    fastcgi_pass: unix:/var/run/php/php{{ php_version }}-fpm.sock
+
+php_version: 7.2
+php_composer: true
+php_fpm_daemon: php{{ php_version }}-fpm
+php_packages:
+  - php{{ php_version }}-mysql
+  - php{{ php_version }}-mbstring
+  - php{{ php_version }}-gd
+
+mysql_root_password: !vault |
+                     $ANSIBLE_VAULT;1.1;AES256
+                     30356266633765333462396666313538633339646363663965353432663165333762663765646463
+                     6636323838653938353066613930653264626265376462300a663731383564613136326234353535
+                     62613564363161623539636434366666333965343764366539343732373262346432383162363135
+                     6664643933393735660a623865323132613530613535393634386333633966333636376534306431
+                     6161
+
+mysql_dbs:
+  covid_entry_dsp_db:                         # some meaningful tag name for this database/user combo - it will not be used on server
+    db_collation: "utf8mb4_unicode_ci"  # default in role
+    encoding: "utf8mb4"                 # default in role
+    database: "covid_web"
+    db_host: localhost
+
+mysql_users:
+  covid_web_user:
+    user: covid_web_user
+    password: !vault |
+              $ANSIBLE_VAULT;1.1;AES256
+              63663635383435343365393065626637643762383661363165626333386233303536663530333762
+              3234313463336632626361303862316531633133616664650a323665353538383365363036336534
+              38366635663665633434353831336632653862343233363434653966386236613532653731386430
+              6661326233656431650a656138396232366639656261313861356233396131343632393136646535
+              30643835623637376432326535356661623437323865363466393539396634396539
+    privileges: "covid_web.*:ALL"                               # db.table:priv1,priv2 OR db1.table1:priv/db2.table2:priv
+    append_privs: no                                            # default in role
+
+mysql_config:
+  - section: mysqld
+    option: bind-address
+    value: 0.0.0.0
+
+php_fpm_custom_user: true
+
+ssl_vault_selfsigned: true
+ssl_domains:
+  - "covid-dsp.citizennext.ro"
+
+# deploy
+project_root:  /var/www/entry-dsp
+project_git_repo: git@github.com:citizennext/covid-19-entry-dsp.git
+
+project_deploy_key: files/id_rsa
+
+project_deploy_strategy: git
+project_version: "{{ branch|default('master') }}"
+
+project_has_composer: true
+project_copy_previous_composer_vendors: true
+project_command_for_composer_install: "{{ project_composer_binary }} install --no-scripts --optimize-autoloader"
+
+# project_shared_children:
+#   - path: "storage/logs"
+#     src: "logs"
+#     writable: true
+
+project_writable_resources:
+  - storage
+
+project_deploy_hook_on_perform_build: "{{playbook_dir}}/hooks/on_perform_build.yml"
+project_deploy_hook_post_finalize: "{{playbook_dir}}/hooks/post_finalize.yml"
+
+project_environment: '{{ project_persistent_environment }}'
+project_persistent_environment:
+  APP_ENV: "{{ app_env|default('production') }}"
+  APP_KEY: !vault |
+           $ANSIBLE_VAULT;1.1;AES256
+           37346636336537633931386430666239373735663039623561303264396432323234333965623738
+           3065653433366432663133373134626566643766646433390a356162323937653664616665616362
+           62376261353964383965633735376533333136666532613630303365376561653230633661633531
+           3635366331346130390a656261343566303837363437653033646432646262633434333334313562
+           3961
+  APP_URL: https://covid-dsp.citizennext.ro
+  APP_TIMEZONE: UTC
+  DB_CONNECTION: mysql
+  DB_HOST: "{{ mysql_dbs.covid_entry_dsp_db.db_host }}"
+  DB_PORT: 3306
+  DB_DATABASE: "{{ mysql_dbs.covid_entry_dsp_db.database }}"
+  DB_USERNAME: "{{ mysql_users.covid_entry_dsp_db.user }}"
+  DB_PASSWORD: "{{ mysql_users.covid_web_user.password }}"

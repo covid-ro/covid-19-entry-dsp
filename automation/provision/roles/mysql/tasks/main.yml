@@ -1,0 +1,103 @@
+---
+- name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install pip3
+  package:
+    pkg: python3-pip
+    state: present
+
+- name: Make sure pymysql is present
+  become: true
+  pip:
+    name: pymysql
+    state: present
+
+- name: Check if requested MySQL version is supported
+  fail:
+    msg: "MySQL version {{ mysql_version }} is not supported by this role. You can install only 5.7 and 8.0."
+  when: mysql_version != 5.7 and mysql_version != 8.0
+
+- include_tasks: install-Ubuntu.yml
+  when: ansible_os_family == 'Debian' and ansible_distribution == "Ubuntu"
+
+- include_tasks: install-Debian.yml
+  when: ansible_distribution == "Debian"
+
+- name: Upload root login config file
+  template:
+    dest: /root/.my.cnf
+    src: my.cnf
+  when: mysql_root_password is defined
+
+- name: Retrieve the current hostname, because {{ ansible_hostname }} still contains the old name
+  shell: hostname
+  register: current_hostname
+
+- name: Update MySQL root password
+  mysql_user:
+    name: root
+    host: '{{ item }}'
+    check_implicit_admin: yes
+    password: '{{ mysql_root_password }}'
+    login_user: root
+    login_password: '{{ mysql_root_password }}'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  with_items:
+    - "{{ current_hostname.stdout | lower }}"
+    - 127.0.0.1
+    - ::1
+    - localhost
+  ignore_errors: True
+
+- name: Create multiple databases
+  mysql_db:
+    name: "{{ item.value.database }}"
+    state: present
+    collation: "{{ item.value.db_collation | default('utf8mb4_unicode_ci') }}"
+    encoding: "{{ item.value.encoding | default('utf8mb4') }}"
+    login_user: root
+    login_password: '{{ mysql_root_password }}'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  with_dict: "{{ mysql_dbs }}"
+  when: mysql_dbs is defined
+
+- name: Ensure anonymous users are not in the database
+  mysql_user:
+    name: ''
+    host: '{{ item }}'
+    state: 'absent'
+    login_user: 'root'
+    login_password: "{{ mysql_root_password }}"
+  with_items:
+    - localhost
+    - "{{ current_hostname.stdout | lower }}"
+
+- name: Create multiple MySQL users
+  mysql_user:
+    name: "{{ item.value.user }}"
+    host: "{{ item.value.host | default('localhost') }}"
+    password: "{{ item.value.password }}"
+    priv: "{{ item.value.privileges }}"
+    state: present
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    append_privs: "{{ item.value.append_privs | default('no') }}"
+  with_dict: "{{ mysql_users }}"
+  when: mysql_users is defined
+  no_log: true
+
+- name: Configure MySQL
+  ini_file:
+    path: "{{ item.dest |default('/etc/mysql/my.cnf') }}"
+    section: "{{ item.section }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ mysql_config|default([]) }}"
+  notify: restart mysql
+
+- include_tasks: replication.yml
+  when: mysql_has_slave_replication is defined and mysql_has_slave_replication == true

@@ -1,0 +1,27 @@
+---
+
+- name: Set custom owner on log, sock and pid php-fpm files
+  file:
+    path: "{{ item }}"
+    owner: '{{ php_fpm_custom_user_options.user_and_group }}'
+  with_items:
+    - "{{ php_fpm_custom_user_options.pid_and_sock_file_path }}"
+    - "{{ php_fpm_custom_user_options.log_file_path }}"
+  notify: reload php-fpm
+
+- name: Change service custom php-fpm user
+  blockinfile:
+    path: "/etc/systemd/system/multi-user.target.wants/php{{ php_version }}-fpm.service"
+    insertafter: '^\[Service'
+    block: |
+      User={{ php_fpm_custom_user_options.user_and_group }}
+      Group={{ php_fpm_custom_user_options.user_and_group }}
+  register: custom_fpmservice
+
+- name: Reload systemctl for fpm service
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: '{{ php_fpm_daemon }}'
+  when: custom_fpmservice.changed
+

@@ -1,0 +1,5 @@
+---
+nodejs_version: 12.x
+nodejs_npm_self_update: true
+nodejs_npm_global_packages: []
+nodejs_yarn: false

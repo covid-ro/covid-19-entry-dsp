@@ -1,0 +1,13 @@
+
+- name: Verify if we already generated the SSL dhparam.pem
+  stat:
+    path: "{{ app.value.dhparam_path }}"
+  register: is_dhparam
+
+- name: Generate the dhparam for SSL
+  shell: >
+    openssl
+    dhparam
+    -out "{{ app.value.dhparam_path }}"
+    2048
+  when: is_dhparam.stat.exists == false

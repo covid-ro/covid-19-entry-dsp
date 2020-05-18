@@ -1,0 +1,19 @@
+---
+# Custom repo and packages state
+nginx_packages_state: present
+nginx_repository: ppa:nginx/stable
+
+# Default paths
+nginx_path: /etc/nginx
+nginx_conf_file_path: '{{ nginx_path }}/nginx.conf'
+nginx_conf_path: '{{ nginx_path }}/conf.d'
+
+# Default Nginx user and group
+nginx_user: www-data
+nginx_group: www-data
+
+# Default user for basic HTTP authentication
+nginx_http_auth_user: devuser
+
+# Install and enable GeoIP module
+nginx_geoip: false

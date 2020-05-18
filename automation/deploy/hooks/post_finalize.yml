@@ -1,0 +1,30 @@
+---
+- name: Run artisan migrate
+  shell: cd {{deploy_helper.new_release_path}} && php artisan migrate --force
+  environment: "{{ project_environment }}"
+
+#- name: Run composer post update scripts
+#  shell: cd {{deploy_helper.new_release_path}} && composer run-script post-update-cmd
+
+#- name: Install assets
+#  shell: cd {{deploy_helper.new_release_path}} && php bin/console assets:install
+
+#- name: Dump assets
+#  shell: cd {{deploy_helper.new_release_path}} && php bin/console assetic:dump
+
+#- name: Force database schema update
+#  shell: cd {{deploy_helper.new_release_path}} && php bin/console doctrine:schema:update --force
+
+- name: Clear the opcache
+  service: name=php7.2-fpm state=restarted
+  become: true
+
+- name: Test Nginx config before restarting the service
+  command: nginx -t
+  become: true
+
+- name: Reload nginx
+  service:
+    name: nginx
+    state: reloaded
+  become: true

@@ -1,0 +1,23 @@
+---
+- name: Remove previous fastcgi params
+  lineinfile:
+    dest: /etc/nginx/fastcgi_params
+    regexp: '^fastcgi_param {{ item.key }}\ ?'
+    state: absent
+    mode: '0640'
+  with_dict: "{{ project_persistent_environment }}"
+  when: project_persistent_environment|length > 0
+  become: true
+  become_user: root
+  no_log: true
+
+- name: Add fastcgi params
+  lineinfile:
+    dest: /etc/nginx/fastcgi_params
+    line: "fastcgi_param {{ item.key }} '{{ item.value }}';"
+    mode: '0640'
+  with_dict: "{{ project_persistent_environment }}"
+  when: project_persistent_environment|length > 0
+  become: true
+  become_user: root
+  no_log: true

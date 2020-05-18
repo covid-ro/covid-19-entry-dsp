@@ -1,0 +1,27 @@
+---
+- name: Check if PHP Composer binary exists
+  stat:
+    path: '{{ php_composer_binary_path }}'
+  register: php_composer_binary
+
+- name: Download the PHP Composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/install-composer
+    mode: 0744
+    force: yes
+  when: not php_composer_binary.stat.exists
+
+- name: Install PHP Composer
+  shell: "php /tmp/install-composer --install-dir=/usr/local/bin --filename=composer"
+  become: yes
+  when: not php_composer_binary.stat.exists
+
+- name: Remove the PHP Composer installer
+  file: path=/tmp/install-composer state=absent
+  become: yes
+  when: not php_composer_binary.stat.exists
+
+- name: Update PHP Composer to latest version if self-update is enabled
+  shell: composer self-update
+  when: php_composer_self_update|bool == true
