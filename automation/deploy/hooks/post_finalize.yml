@@ -1,19 +1,23 @@
 ---
+- name: Run npm install
+  shell: cd {{deploy_helper.new_release_path}} && npm install
+  environment: "{{ project_environment }}"
+
+- name: Run npm dev
+  shell: cd {{deploy_helper.new_release_path}} && npm run dev
+  environment: "{{ project_environment }}"
+
+- name: Run artisan config cache
+  shell: cd {{deploy_helper.new_release_path}} && php artisan config:cache
+  environment: "{{ project_environment }}"
+
+- name: Run artisan config clear
+  shell: cd {{deploy_helper.new_release_path}} && php artisan config:clear
+  environment: "{{ project_environment }}"
+
 - name: Run artisan migrate
   shell: cd {{deploy_helper.new_release_path}} && php artisan migrate --force
   environment: "{{ project_environment }}"
-
-#- name: Run composer post update scripts
-#  shell: cd {{deploy_helper.new_release_path}} && composer run-script post-update-cmd
-
-#- name: Install assets
-#  shell: cd {{deploy_helper.new_release_path}} && php bin/console assets:install
-
-#- name: Dump assets
-#  shell: cd {{deploy_helper.new_release_path}} && php bin/console assetic:dump
-
-#- name: Force database schema update
-#  shell: cd {{deploy_helper.new_release_path}} && php bin/console doctrine:schema:update --force
 
 - name: Clear the opcache
   service: name=php7.2-fpm state=restarted
