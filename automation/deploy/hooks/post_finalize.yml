@@ -1,8 +1,4 @@
 ---
-- name: Run artisan migrate
-  shell: cd {{deploy_helper.new_release_path}} && php artisan migrate --force
-  environment: "{{ project_environment }}"
-
 - name: Run npm install
   shell: cd {{deploy_helper.new_release_path}} && npm install
   environment: "{{ project_environment }}"
