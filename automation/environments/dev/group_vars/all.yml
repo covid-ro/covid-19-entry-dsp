@@ -62,6 +62,7 @@ certbot_certs:
        - covid-dsp.citizennext.ro
 
 certbot_admin_email: marius.udubasa@citizennext.ro
+certbot_create_if_missing: true
 
 # deploy
 project_root:  /var/www/entry-dsp
