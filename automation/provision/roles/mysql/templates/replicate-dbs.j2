@@ -1,0 +1,5 @@
+{% for db in mysql_replicate_dbs %}
+
+binlog_do_db = {{ db.name }}
+
+{% endfor %}

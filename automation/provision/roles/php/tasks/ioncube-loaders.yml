@@ -1,0 +1,36 @@
+---
+
+- name: Verifing if Ioncube is installed
+  stat: path="{{ ioncube_path }}/ioncube"
+  register: ioncube_dir
+
+- name: Download Ioncube loaders
+  get_url:
+    url: http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz
+    dest: "{{ ioncube_path }}/ioncube_loaders_lin_x86-64.tar.gz"
+  when: not ioncube_dir.stat.exists
+
+- unarchive:
+    src: "{{ ioncube_path }}/ioncube_loaders_lin_x86-64.tar.gz"
+    dest: "{{ ioncube_path }}"
+    remote_src: yes
+  when: not ioncube_dir.stat.exists
+
+- name: Delete zip file
+  file: path="{{ ioncube_path }}/ioncube_loaders_lin_x86-64.tar.gz" state=absent
+  when: not ioncube_dir.stat.exists
+
+- name: Enable Ioncube loaders for PHP-CLI
+  lineinfile:
+    dest: "{{ php_path }}/cli/php.ini"
+    regexp: "zend_extension = {{ ioncube_path }}/ioncube/{{ ioncube_loader_file }}"
+    line: "zend_extension = {{ ioncube_path }}/ioncube/{{ ioncube_loader_file }}"
+  when: ioncube_loader_file is defined
+
+- name: Enable Ioncube loaders for PHP-FPM
+  lineinfile:
+    dest: "{{ php_path }}/fpm/php.ini"
+    regexp: "zend_extension = {{ ioncube_path }}/ioncube/{{ ioncube_loader_file }}"
+    line: "zend_extension = {{ ioncube_path }}/ioncube/{{ ioncube_loader_file }}"
+  when: ioncube_loader_file is defined and php_fpm is defined and php_fpm
+  notify: restart php-fpm

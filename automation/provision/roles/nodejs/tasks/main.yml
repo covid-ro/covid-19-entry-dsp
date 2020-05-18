@@ -1,0 +1,15 @@
+---
+# Installs and configures Node.js.
+
+- include_tasks: install-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Install global NPM packages
+  npm:
+    name: '{{ item }}'
+    global: yes
+  with_items: "{{ nodejs_npm_global_packages }}"
+  when: nodejs_npm_global_packages is defined
+
+- include_tasks: install-yarn-Debian.yml
+  when: ansible_os_family == "Debian" and nodejs_yarn

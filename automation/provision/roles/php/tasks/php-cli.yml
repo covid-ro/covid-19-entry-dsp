@@ -1,0 +1,22 @@
+---
+
+- name: Configure PHP CLI ini
+  ini_file:
+    dest: '{{ php_cli_ini_path }}'
+    section: "{{ item.section|default('PHP') }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    state: "{{ item.state | default('present') }}"
+  with_items:
+    - "{{ php_cli_ini_default_conf | list }}"
+    - "{{ php_cli_ini_conf | list }}"
+  when: php_cli_ini_conf is defined or php_cli_ini_default_conf is defined
+
+- name: Configure PHP CLI ini for Apache
+  ini_file:
+    dest: "{{ php_apache_ini_path }}"
+    section: "{{ item.section|default('PHP') }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  with_items: "{{ php_apache_ini_conf }}"
+  when: php_apache_ini_conf is defined and php_apache_ini_conf

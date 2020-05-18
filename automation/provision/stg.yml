@@ -1,0 +1,12 @@
+---
+- name: Staging provisioning
+  hosts: "stg_web"
+  become: true
+
+  roles:
+    - nginx
+    - certbot
+    - php
+    - mysql
+    - nodejs
+    - apps

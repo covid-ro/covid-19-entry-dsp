@@ -1,0 +1,88 @@
+---
+# Custom repo and packages state
+php_packages_state: present
+php_repository: ppa:ondrej/php
+
+# Paths to PHP configuration files
+php_path: /etc/php/{{ php_version }}
+php_cli_ini_path: '{{ php_path }}/cli/php.ini'
+php_fpm_ini_path: '{{ php_path }}/fpm/php.ini'
+php_fpm_conf_path: '{{ php_path }}/fpm/php-fpm.conf'
+php_fpm_pool_path: '{{ php_path }}/fpm/pool.d'
+php_apache_ini_path: '{{ php_path }}/apache2/php.ini'
+php_fpm_daemon: php{{ php_version }}-fpm
+php_fpm_service: php-fpm{{ php_version }}
+# PHP version to install
+# This variable is mandatory to be defined in the playbooks
+# in order to prevent default version installation or worst
+# undesired PHP update on existing installations
+#php_version: 7.2
+
+# Default PHP packages
+php_cli: true
+php_fpm: true
+php_mysql: true
+
+# ToDo: confirm the list of default PHP packages
+php_default_packages:
+  - php{{ php_version }}-intl
+  - php{{ php_version }}-curl
+  - php{{ php_version }}-xml
+  - php{{ php_version }}-zip
+
+# Extra PHP packages
+php_packages: []
+
+# Default config values:
+php_timezone: Europe/Bucharest
+
+# ToDo: confirm default PHP FPM ini confg
+php_fpm_ini_default_conf:
+  - section: Date
+    option: date.timezone
+    value: '{{ php_timezone }}'
+  - section: PHP
+    option: error_log
+    value: /var/log/php/error.log
+  - section: opcache
+    option: opcache.enable
+    value: 1
+
+# ToDo: confirm default PHP CLI ini confg
+php_cli_ini_default_conf:
+  - section: Date
+    option: date.timezone
+    value: '{{ php_timezone }}'
+  - section: opcache
+    option: opcache.enable
+    value: 1
+
+# ToDo: confirm default PHP FPM pool config
+php_fpm_pool_default_conf:
+  - option: listen.owner
+    value: www-data
+  - option: listen.group
+    value: www-data
+
+# ToDo: confirm default PHP FPM config
+php_fpm_default_conf:
+  - option: log_level
+    value: warning
+
+php_fpm_custom_user: false
+php_fpm_custom_user_options:
+  user_and_group: www-data
+  pid_and_sock_file_path: /run/php
+  log_file_path: /var/log/php{{ php_version }}-fpm.log
+
+# Configs
+php_cli_ini_conf: []
+php_fpm_ini_conf: []
+php_fpm_conf: []
+php_fpm_pool_conf: []
+php_apache_ini_conf: []
+
+# PHP Composer variables
+php_composer: false
+php_composer_binary_path: /usr/local/bin/composer
+php_composer_self_update: true

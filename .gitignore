@@ -34,3 +34,5 @@ Homestead.json
 *.iws
 
 /docker/docker-compose.yml
+
+ansible.cfg

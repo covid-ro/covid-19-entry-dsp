@@ -1,0 +1,37 @@
+---
+
+- name: Add official MariaDB repository
+  block:
+    - apt_key:
+        url: https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF1656F24C74CD1D8
+    - apt_repository:
+        repo: '{{ mariadb_debian_repository }}'
+        state: present
+  when: mariadb_version == '10.2'
+
+- name: Install "python-mysqldb" prerequisite
+  package:
+    pkg: python-mysqldb
+    state: latest
+
+- name: Install MariaDB packages
+  package:
+    pkg: '{{ item }}'
+    state: '{{ mariadb_packages_state }}'
+  with_items: '{{ mariadb_packages }}'
+
+- name: Enable MariaDB
+  service:
+    name: mariadb
+    enabled: yes
+
+- name: Start MariaDB, if not started
+  service:
+    name: mariadb
+    state: started
+
+- name: Upload root login config file
+  template:
+    dest: /root/.my.cnf
+    src: my.cnf
+  when: mysql_root_password is defined

@@ -1,0 +1,138 @@
+---
+- name: Get gpg nginx repo key
+  apt_key:
+    url: http://nginx.org/keys/nginx_signing.key
+    state: present
+  when: ansible_distribution == "Debian"
+
+- name: Add nginx source repo to local apt sources
+  apt_repository:
+    repo: deb http://nginx.org/packages/debian/ {{ ansible_distribution_release }} nginx
+    state: present
+    filename: nginx
+  when: ansible_distribution == "Debian"
+
+- name: Add Nginx official repository
+  apt_repository:
+    repo: '{{ nginx_repository }}'
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- name: Install Nginx
+  package:
+    pkg: nginx
+    state: '{{ nginx_packages_state }}'
+
+- name: Install Nginx Geoip package
+  package:
+    pkg: nginx-module-geoip
+    state: '{{ nginx_packages_state }}'
+  when: nginx_geoip == true
+
+- name: Replace the Nginx conf file on Ubuntu
+  template:
+    src: nginx.conf.tpl
+    dest: '{{ nginx_conf_file_path }}'
+  notify: restart nginx
+  when: ansible_distribution == "Ubuntu"
+
+- name: Replace the Nginx conf file on Debian
+  template:
+    src: nginx-debian.conf.tpl
+    dest: '{{ nginx_conf_file_path }}'
+  notify: restart nginx
+  when: ansible_distribution == "Debian"
+
+- name: Copy performance settings file
+  copy:
+    src: performance.conf
+    dest: '{{ nginx_conf_path }}/performance.conf'
+    owner: root
+    group: root
+  notify: reload nginx
+
+- name: Copy security settings file
+  copy:
+    src: security.conf
+    dest: '{{ nginx_conf_path }}/security.conf'
+    owner: root
+    group: root
+  notify: reload nginx
+
+- name: Copy static content settings file
+  copy:
+    src: static-content.conf
+    dest: '{{ nginx_conf_path }}/static-content.conf'
+    owner: root
+    group: root
+  notify: reload nginx
+
+- name: Copy GZIP settings file
+  copy:
+    src: gzip.conf
+    dest: '{{ nginx_conf_path }}/gzip.conf'
+    owner: root
+    group: root
+  notify: reload nginx
+
+- name: Ensures conf.d/ssl directory exists
+  file:
+    path: '{{ nginx_conf_path }}/ssl'
+    state: directory
+
+- name: Generate httpauth settings file
+  template:
+    src: httpauth.conf.tpl
+    dest: '{{ nginx_conf_path }}/httpauth.conf'
+    owner: root
+    group: root
+  with_dict: "{{ apps }}"
+  when: item.value.http_auth is defined
+  notify: reload nginx
+
+- name: Determine required MySQL Passlib library
+  set_fact:
+    passlib_python_package: "{% if 'python3' in ansible_python_interpreter|default('') %}python3-passlib{% else %}python-passlib{% endif %}"
+
+- name: Make sure we can use htpasswd module
+  apt:
+    pkg: '{{ passlib_python_package }}'
+    state: present
+  with_dict: "{{ apps }}"
+  when: item.value.http_auth is defined
+
+- name: Generate http auth password file
+  htpasswd:
+    path: '{{ nginx_conf_path }}/passwdfile'
+    name: '{{ nginx_http_auth_user }}'
+    password: '{{ item.value.http_auth }}'
+    owner: root
+    group: '{{ nginx_group }}'
+    mode: 0644
+  with_dict: "{{ apps }}"
+  when: item.value.http_auth is defined
+
+- name: Create virtual hosts directories
+  file:
+    path: '{{ nginx_conf_path }}/{{ item }}'
+    state: directory
+    mode: 0755
+  with_items:
+    - sites-available
+    - sites-enabled
+
+- name: Delete default files from nginx install
+  file:
+    path: "{{item}}"
+    state: absent
+  with_items:
+    - '{{nginx_path}}/sites-available/default'
+    - '{{nginx_path}}/sites-enabled/default'
+    - /var/www/html
+
+- name: Ensure Nginx is enabled and started
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+    use: service

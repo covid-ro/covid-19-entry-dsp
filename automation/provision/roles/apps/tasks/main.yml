@@ -1,0 +1,66 @@
+---
+- name: Add the deploy user to php-fpm user group
+  user:
+    name: "{{ ansible_user }}"
+    groups: www-data
+    append: yes
+
+- name: Create root folders for the applications
+  file:
+    path: '{{ item.value.docroot }}'
+    owner: '{{ ansible_ssh_user }}'
+    group: www-data
+    state: directory
+  with_dict: '{{ apps }}'
+
+- name: Generate dhparam
+  include: dhparam.yml
+  with_dict: "{{ apps }}"
+  loop_control:
+    loop_var: app
+
+- name: Replace the Nginx conf file on Debian
+  template:
+    src: nginx-debian.conf.tpl
+    dest: '{{ nginx_conf_file_path }}'
+  notify: restart nginx
+  when: ansible_distribution == "Debian"
+
+# enable vhosts
+- name: Add Nginx configuration files for defined apps
+  template:
+    src: "{{ item.value.template }}"
+    dest: /etc/nginx/sites-available/{{ item.key }}
+  with_dict: "{{ apps }}"
+  notify:
+    - reload webserver
+    - reload php-fpm
+
+- name: Enable Nginx configuration files for defined apps
+  file:
+    src: /etc/nginx/sites-available/{{ item.key }}
+    dest: /etc/nginx/sites-enabled/{{ item.key }}
+    state: link
+  with_dict: "{{ apps }}"
+  notify:
+    - reload webserver
+    - reload php-fpm
+
+- name: Set fpm service umask to allow group write
+  lineinfile:
+    path: "/etc/systemd/system/multi-user.target.wants/php{{ php_version }}-fpm.service"
+    regexp: '^UMask '
+    insertafter: '^ExecReload'
+    line: 'UMask = 0002'
+  when: php_version is defined
+  register: fpmservice
+
+- name: Reload systemctl for fpm service
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: '{{ php_fpm_daemon }}'
+  when: fpmservice.changed
+
+- name: Test Nginx config before restarting the service
+  command: nginx -t

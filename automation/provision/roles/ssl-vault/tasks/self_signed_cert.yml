@@ -1,0 +1,21 @@
+---
+- name: Create dir for {{ item }}
+  file:
+    path: /etc/ssl/{{ item }}
+    state: directory
+  with_items: "{{ ssl_domains }}"
+
+- name: Generate self signed certificate
+  shell: >
+    openssl
+    req -x509
+    -nodes
+    -days 365
+    -newkey rsa:2048
+    -keyout "/etc/ssl/{{item}}/privkey.pem"
+    -out "/etc/ssl/{{item}}/fullchain.pem"
+    -subj "/C={{ssl_selfsigned_country}}/ST={{ssl_selfsigned_state}}/L={{ssl_selfsigned_locality}}/O={{ssl_selfsigned_organization}}/OU={{ssl_selfsigned_organizationalunit}}/CN={{item}}/emailAddress={{ssl_selfsigned_email}}"
+  when: ssl_vault_selfsigned == true
+  with_items: "{{ssl_domains}}"
+  notify:
+    - restart webserver

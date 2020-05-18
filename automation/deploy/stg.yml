@@ -1,0 +1,7 @@
+---
+- name: Deploy application
+  hosts: "stg_web"
+
+  roles:
+    - fastcgi_params
+    - project_deploy

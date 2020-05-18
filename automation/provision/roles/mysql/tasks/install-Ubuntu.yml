@@ -1,0 +1,32 @@
+---
+
+- name: Add official MySQL repository
+  block:
+    - apt_key:
+        url: http://repo.mysql.com/RPM-GPG-KEY-mysql
+    - apt_repository:
+        repo: '{{ mysql_repository }}'
+        state: present
+  when: (ansible_distribution_release == 'xenial' and mysql_version == 8.0) or 
+        (ansible_distribution_release == 'bionic' and mysql_version == 8.0)
+
+- name: Install "python-mysqldb" prerequisite
+  package:
+    pkg: python-mysqldb
+    state: latest
+
+- name: Install MySQL packages
+  package:
+    pkg: '{{ item }}'
+    state: '{{ mysql_packages_state }}'
+  with_items: '{{ mysql_packages }}'
+  
+- name: Enable MySQL
+  service:
+    name: mysql
+    enabled: yes
+
+- name: Start MySQL, if not started
+  service:
+    name: mysql
+    state: started

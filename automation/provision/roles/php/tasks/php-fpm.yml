@@ -1,0 +1,44 @@
+---
+
+- name: Configure PHP FPM ini
+  ini_file:
+    dest: '{{ php_fpm_ini_path }}'
+    section: '{{ item.section|default("PHP") }}'
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+    state: "{{ item.state | default('present') }}"
+  with_items:
+    - '{{ php_fpm_ini_default_conf | list }}'
+    - '{{ php_fpm_ini_conf | list }}'
+  when: php_fpm and (php_fpm_ini_default_conf is defined or php_fpm_ini_conf is defined)
+  notify: reload php-fpm
+
+- name: Configure PHP FPM config
+  ini_file:
+    dest: '{{ php_fpm_conf_path }}'
+    section: '{{ item.section|default("global") }}'
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+    state: "{{ item.state | default('present') }}"
+  with_items:
+    - '{{ php_fpm_default_conf | list }}'
+    - '{{ php_fpm_conf | list }}'
+  when: php_fpm and (php_fpm_ini_default_conf is defined or php_fpm_ini_conf is defined)
+  notify: reload php-fpm
+
+- name: Configure PHP FPM pool
+  ini_file:
+    dest: '{{ php_fpm_pool_path }}/www.conf'
+    section: '{{ item.section|default("www") }}'
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+    state: "{{ item.state | default('present') }}"
+  with_items:
+    - '{{ php_fpm_pool_default_conf | list }}'
+    - '{{ php_fpm_pool_conf | list }}'
+  when: php_fpm and (php_fpm_pool_default_conf is defined or php_fpm_pool_conf is defined)
+  notify: reload php-fpm
+
+- name: Check PHP FPM syntax
+  command: '{{ php_fpm_service }} -t'
+  when: php_fpm
