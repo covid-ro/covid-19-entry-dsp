@@ -117,7 +117,7 @@ project_persistent_environment:
   DB_DATABASE: "{{ mysql_dbs.covid_entry_dsp_db.database }}"
   DB_USERNAME: "{{ mysql_users.covid_web_user.user }}"
   DB_PASSWORD: "{{ mysql_users.covid_web_user.password }}"
-  COVID19_DSP_API: "https://covid-api-dev.citizennext.ro"
+  COVID19_DSP_API: "https://covid-api-dev.citizennext.ro/"
   COVID19_DSP_API_KEY: !vault |
                        $ANSIBLE_VAULT;1.1;AES256
                        64323539346338383432623065626665303330623233656436653534633365326631666431333666
