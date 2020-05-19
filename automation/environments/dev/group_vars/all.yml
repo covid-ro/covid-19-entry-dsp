@@ -3,7 +3,7 @@ apps:
   web:
     docroot: /var/www/entry-dsp
     public: /var/www/entry-dsp/current/src/public
-    servername: entry-dsp-dev.citizennext.ro
+    servername: covid-dsp.citizennext.ro
     template: web.tpl
     certificate: "covid-dsp.citizennext.ro"
     dhparam_path: "/etc/ssl/dhparam.pem"
