@@ -1,3 +1,12 @@
+## [0.9.8] - 2020-05-19
+
+### Added
+- ansible automation
+
+### Modify
+- CHANGELOG.md
+- refactor the whole structure of the project
+
 ## [0.9.7] - 2020-05-02
 
 ### Added
