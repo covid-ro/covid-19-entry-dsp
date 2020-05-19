@@ -111,6 +111,7 @@ project_persistent_environment:
            343235636566623038333766373739646238
   APP_URL: https://covid-dsp.citizennext.ro
   APP_TIMEZONE: UTC
+  APP_NAME: "DSP Declaraţii Coronavirus COVID-19"
   DB_CONNECTION: mysql
   DB_HOST: "{{ mysql_dbs.covid_entry_dsp_db.db_host }}"
   DB_PORT: 3306
