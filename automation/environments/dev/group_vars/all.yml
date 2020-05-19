@@ -2,7 +2,7 @@
 apps:
   web:
     docroot: /var/www/entry-dsp
-    public: /var/www/entry-dsp/current/public
+    public: /var/www/entry-dsp/current/src/public
     servername: entry-dsp-dev.citizennext.ro
     template: web.tpl
     certificate: "covid-dsp.citizennext.ro"
@@ -92,7 +92,7 @@ secret_github_token: !vault |
 #     writable: true
 
 project_writable_resources:
-  - storage
+  - src/storage
 
 project_deploy_hook_on_perform_build: "{{playbook_dir}}/hooks/on_perform_build.yml"
 project_deploy_hook_post_finalize: "{{playbook_dir}}/hooks/post_finalize.yml"
