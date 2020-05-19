@@ -35,8 +35,8 @@ class Declaration
     public static function all(string $url, array $params, string $format = null)
     {
         $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : 'admin' ;
-//        return Cache::untilUpdated('declarations-' . Auth::user()->username, env('CACHE_DECLARATIONS_PERSISTENCE'),
-//            function() use ($url, $params, $format, $user) {
+        return Cache::untilUpdated('declarations-' . Auth::user()->username, env('CACHE_DECLARATIONS_PERSISTENCE'),
+            function() use ($url, $params, $format, $user) {
                 try {
                     $apiRequest = self::connectApi()
                         ->get($url, $params);
@@ -57,8 +57,8 @@ class Declaration
                 } catch(Exception $exception) {
                     return $exception->getMessage();
                 }
-//            }
-//        );
+            }
+        );
     }
 
     /**
