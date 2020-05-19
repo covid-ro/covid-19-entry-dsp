@@ -5,7 +5,8 @@ GREEN=`tput setaf 2`
 BLUE=`tput setaf 4`
 RESET=`tput sgr0` # reset colors
 
-declare -a PLATFORM_LIST=("docker/docker-compose-main.yml")
+declare -a PLATFORM_LIST=(".docker/docker-compose-main.yml")
+source ./src/.env # get configuration file
 
 if [ $# -ne 0 ]; then
 
@@ -46,11 +47,15 @@ if [ $# -ne 0 ]; then
                 exit 0
                 ;;
             -m|--mysql-db)
-                PLATFORM_LIST+=("docker/docker-compose-mysql.yml")
+                sed -i "s#DB_DATABASE#$DB_DATABASE#g" ".docker/docker-compose-mysql.yml"
+                sed -i "s#DB_ROOT_PASSWORD#$DB_ROOT_PASSWORD#g" ".docker/docker-compose-mysql.yml"
+                PLATFORM_LIST+=(".docker/docker-compose-mysql.yml")
                 shift
                 ;;
             -t|--tools)
-                PLATFORM_LIST+=("docker/docker-compose-tools.yml")
+                sed -i "s#DB_HOST#$DB_HOST#g" ".docker/docker-compose-tools.yml"
+                sed -i "s#DB_ROOT_PASSWORD#$DB_ROOT_PASSWORD#g" ".docker/docker-compose-tools.yml"
+                PLATFORM_LIST+=(".docker/docker-compose-tools.yml")
                 shift
                 ;;
             --)
@@ -65,8 +70,8 @@ if [ $# -ne 0 ]; then
     done
 fi;
 
-docker-compose $(printf -- "-f %s " "${PLATFORM_LIST[@]}") config > docker/docker-compose.yml
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose $(printf -- "-f %s " "${PLATFORM_LIST[@]}") config > .docker/docker-compose.yml
+docker-compose -f .docker/docker-compose.yml up -d
 
 echo -en "\n"
 echo "${RED}Run in covid19-dsp-app container composer install${RESET}"

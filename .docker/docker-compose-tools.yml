@@ -33,8 +33,8 @@ services:
     ports:
       - 8081:80
     environment:
-      PMA_HOST: ${DB_HOST}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      PMA_HOST: DB_HOST
+      MYSQL_ROOT_PASSWORD: DB_ROOT_PASSWORD
     networks:
       - app-network
 

@@ -4,15 +4,15 @@ services:
   #PHP Service
   covid19-dsp-app:
     build:
-      context: ./../docker/
-      dockerfile: ./../docker/Dockerfile
+      context: ./../.docker/
+      dockerfile: ./../.docker/Dockerfile
     image: covid19_dsp/php
     container_name: covid19-dsp-app
     restart: unless-stopped
     working_dir: /var/www
     volumes:
-      - ./../:/var/www
-      - ./../docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+      - ./../src:/var/www
+      - ./../.docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - app-network
 
@@ -25,8 +25,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./../:/var/www
-      - ./../docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./../src:/var/www
+      - ./../.docker/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
       - app-network
 
