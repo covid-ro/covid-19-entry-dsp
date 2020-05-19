@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@if ( Auth::user()->username !== env('ADMIN_USER') )
 @section('js_scripts')
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
     <script type="text/javascript" src="{{ asset('js/document-font-bold.js' )}}"></script>
@@ -7,6 +8,7 @@
     <script type="text/javascript" src="{{ asset('js/document-trans.js' )}}"></script>
     <script type="text/javascript" src="{{ asset('js/document.js' )}}"></script>
 @endsection
+@endif
 
 @section('content')
 <div class="container">
@@ -18,6 +20,7 @@
         </button>
     </div>
     @endif
+    @if ( Auth::user()->username !== env('ADMIN_USER') )
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card alert ajax-msg alert-dismissible fade show">
@@ -28,6 +31,7 @@
             </div>
         </div>
     </div>
+    @endif
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
@@ -60,6 +64,7 @@
                             {{ __('app.Declarations list') }}
                         </a>
                     </div>
+                    @if ( Auth::user()->username !== env('ADMIN_USER') )
                     <div class="float-right">
                         <a href="javascript:void(0);" id="print-declaration" class="btn btn-danger btn-sm btn-top"
                            role="button"
@@ -67,6 +72,7 @@
                             {{ __('app.Print') }}
                         </a>
                     </div>
+                    @endif
                 </div>
 
                 <div class="card-body">
@@ -528,6 +534,7 @@
                             </div>
                         </div>
                     </section>
+                    @if ( Auth::user()->username !== env('ADMIN_USER') )
                     <script type="text/javascript">
                         $(document).ready( function () {
                             $.ajaxSetup({
@@ -584,6 +591,7 @@
                             });
                         });
                     </script>
+                    @endif
                     @endif
                 </div>
             </div>

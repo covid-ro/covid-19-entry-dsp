@@ -1,3 +1,4 @@
+<?php if( Auth::user()->username !== env('ADMIN_USER') ): ?>
 <?php $__env->startSection('js_scripts'); ?>
     <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
     <script type="text/javascript" src="<?php echo e(asset('js/document-font-bold.js' )); ?>"></script>
@@ -5,6 +6,7 @@
     <script type="text/javascript" src="<?php echo e(asset('js/document-trans.js' )); ?>"></script>
     <script type="text/javascript" src="<?php echo e(asset('js/document.js' )); ?>"></script>
 <?php $__env->stopSection(); ?>
+<?php endif; ?>
 
 <?php $__env->startSection('content'); ?>
 <div class="container">
@@ -17,6 +19,7 @@
         </button>
     </div>
     <?php endif; ?>
+    <?php if( Auth::user()->username !== env('ADMIN_USER') ): ?>
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card alert ajax-msg alert-dismissible fade show">
@@ -27,6 +30,7 @@
             </div>
         </div>
     </div>
+    <?php endif; ?>
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
@@ -59,6 +63,7 @@
 
                         </a>
                     </div>
+                    <?php if( Auth::user()->username !== env('ADMIN_USER') ): ?>
                     <div class="float-right">
                         <a href="javascript:void(0);" id="print-declaration" class="btn btn-danger btn-sm btn-top"
                            role="button"
@@ -67,6 +72,7 @@
 
                         </a>
                     </div>
+                    <?php endif; ?>
                 </div>
 
                 <div class="card-body">
@@ -546,6 +552,7 @@
                             </div>
                         </div>
                     </section>
+                    <?php if( Auth::user()->username !== env('ADMIN_USER') ): ?>
                     <script type="text/javascript">
                         $(document).ready( function () {
                             $.ajaxSetup({
@@ -602,6 +609,7 @@
                             });
                         });
                     </script>
+                    <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
