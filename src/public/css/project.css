@@ -26,7 +26,9 @@ tr.shown td.details-control {
 #change-language {
     margin: 0 !important;
 }
-#header-declaration {
+#header-declaration,
+#private-data,
+#transit-data {
     margin: 0 0 1rem 0;
 }
 .btn-top {
@@ -105,4 +107,7 @@ p.no-margin-bottom {
 }
 .status-declaration img {
     margin-right: 5px;
+}
+.form-check.sub-list {
+    padding: 0 0 0 5rem;
 }

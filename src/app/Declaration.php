@@ -203,6 +203,10 @@ class Declaration
                 null : Carbon::parse($declaration['dsp_validated_at'])->format('d m Y H:i:s');
             $formattedDeclarations[$key]['dsp_user_name'] = is_null($declaration['dsp_validated_at']) ?
                 null : $declaration['dsp_user_name'];
+
+            // versiunea 1.1
+            $formattedDeclarations[$key]['accept_personal_data'] = $declaration['accept_personal_data'];
+            $formattedDeclarations[$key]['accept_read_law'] = $declaration['accept_read_law'];
         }
 
         return $formattedDeclarations;
@@ -241,17 +245,23 @@ class Declaration
         }
         $formatedResult['signature'] = $signature;
         $declaration['travelling_from_country'] = $countries[$declaration['travelling_from_country_code']];
-        if ($locale === 'ro') {
-            $declaration['travelling_from_date'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
-                ->format('d m Y');
-        }
+        $declaration['travelling_date_year'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+            ->format('Y');
+        $declaration['travelling_date_month'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+            ->format('m');
+        $declaration['travelling_date_day'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+            ->format('d');
         if(!is_null($declaration['border_crossed_at'])) {
             $declaration['border_validated_at'] = ($locale === 'ro') ?
                 Carbon::parse($declaration['border_validated_at'])->format('d m Y') :
                 Carbon::parse($declaration['border_validated_at'])->format('Y-m-d');
         }
-        $declaration['birth_date'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
-            ->format('d/m/Y');
+        $declaration['birth_date_year'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+            ->format('Y');
+        $declaration['birth_date_month'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+            ->format('m');
+        $declaration['birth_date_day'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+            ->format('d');
         $formatedResult['qr_code'] = 'data:image/png;base64,' .
             base64_encode(QrCode::format('png')->size(100)->generate($declaration['code']));
         if (count($declaration['isolation_addresses']) > 0) {
@@ -297,11 +307,15 @@ class Declaration
             'sex' => $declaration['sex'],
             'idCardSeries' => $declaration['document_series'],
             'idCardNumber' => $declaration['document_number'],
-            'birthday' => $declaration['birth_date'],
+            'birthYear' => $declaration['birth_date_year'],
+            'birthMonth' => $declaration['birth_date_month'],
+            'birthDay' => $declaration['birth_date_day'],
             'dateArrival' => $declaration['border_validated_at'],
             'countryLeave' => $declaration['travelling_from_country'],
             'localityLeave' => $declaration['travelling_from_city'],
-            'dateLeave' => $declaration['travelling_from_date'],
+            'travellingYear' => $declaration['travelling_date_year'],
+            'travellingMonth' => $declaration['travelling_date_month'],
+            'travellingDay' => $declaration['travelling_date_day'],
             'phoneNumber' => $declaration['phone'],
             'emailAddress' => $declaration['email'],
             'addresses' => $addresses,
