@@ -74,6 +74,7 @@ project_deploy_strategy: git
 project_version: "{{ branch|default('master') }}"
 
 project_has_composer: true
+project_composer_relative_dir: src
 project_copy_previous_composer_vendors: true
 project_command_for_composer_install: "{{ project_composer_binary }} install --no-scripts --optimize-autoloader"
 

@@ -109,7 +109,7 @@
     dest: /home/{{ ansible_user }}/.config/composer/auth.json
 
 - name: Do composer install
-  command: "{{ project_command_for_composer_install }} chdir={{ deploy_helper.new_release_path }}"
+  command: "{{ project_command_for_composer_install }} chdir={{ deploy_helper.new_release_path }}/{{ project_composer_relative_dir }}"
   environment: "{{ project_environment }}"
   when: project_has_composer
 
