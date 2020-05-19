@@ -27,7 +27,7 @@ git clone git@github.com:citizennext/covid-19-entry-dsp.git covid-19-entry-dsp
 ```
 * Move into the `covid-19-entry-dsp` directory
 ```shell script
-cd ~/covid-19-entry-dsp/src
+cd ~/covid-19-entry-dsp
 ```
 * Mount the directories that you will need for your Laravel project and avoid the overhead of installing Composer
  globally
