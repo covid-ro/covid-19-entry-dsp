@@ -125,5 +125,36 @@ return [
         'The person crossed border at :validatedAt but was not validated yet by DSP.',
     'The declaration was validated at :dspValidatedAt by another DSP user [:userName].' =>
         'The declaration was validated at :dspValidatedAt by another DSP user [:userName].',
-    'The person did not arrived at any border checkpoint.' => 'The person did not arrived at any border checkpoint.'
+    'The person did not arrived at any border checkpoint.' => 'The person did not arrived at any border checkpoint.',
+
+    // version 1.1
+    'DSP measure' => 'Measure disposed by the Department of Public Health (D.S.P)',
+    'DSP signature' => 'D.S.P. signature',
+    'Hospitalisation' => 'hospital admission',
+    'Quarantine' => 'institutionalized quarantine',
+    'Isolation' => 'self-isolation at declared address',
+    'Date of birth v1' => 'Date of birth',
+    'Year' => 'year',
+    'Month' => 'month',
+    'Day' => 'day',
+    'Main address' => 'Home address (according to the identification document)',
+    'Travelling from and' => 'Country/Countries I departed/transited',
+    'Depart from' => 'departed from',
+    'Transited' => 'transited',
+    'City from and' => 'City/Cities I departed/transited',
+    'Date travelling' => 'Date of departure',
+    'Self responsibility' => 'I hereby declare',
+    'I have taken note of the fact that' => 'I am aware that, in order to prevent the spread of the SARS CoV-2
+        virus in Romania, I have the obligation to abide by the procedures of isolation/ quarantine/ hospital
+        admission, as disposed.',
+    'for the implementation of the isolation measure' => 'In order <strong>to self-isolate</strong>, after leaving
+        the premises of the border crossing point, I will follow <strong>the shortest route</strong> to',
+    'Home address' => 'Home address or',
+    'Other address' => 'the following address',
+    'I will travel by' => 'I will travel by',
+    'I agree to the use of my personal data' => 'I agree to the use of my personal data and information found in
+        this declaration by the competent authorities.',
+    'I acknowledge the provisions' => 'I acknowledge the provisions of <strong>the art. 326 in the Penal Code
+        regarding false statements and art. 352 regarding thwarting disease control</strong>.',
+    'During my stay in Romania I can be reached at' => 'During my stay in Romania I can be reached at'
 ];

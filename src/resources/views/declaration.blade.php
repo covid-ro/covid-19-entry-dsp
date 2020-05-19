@@ -93,405 +93,181 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 text-left">
+                            <div class="col-md-12 text-justify">
+                                <table class="table table-bordered border border-dark">
+                                    <tbody>
+                                        <tr>
+                                            <td width="70%">
+                                                <h5>{{ __('app.DSP measure') }}:</h5>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="hospitalisation">
+                                                    <label class="form-check-label" for="hospitalisation">
+                                                        <strong>{{ __('app.Hospitalisation') }}</strong>;</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="quarantine">
+                                                    <label class="form-check-label" for="quarantine">
+                                                        <strong>{{ __('app.Quarantine') }}</strong>;</label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <input class="form-check-input" type="checkbox" id="isolation">
+                                                    <label class="form-check-label" for="isolation">
+                                                        <strong>{{ __('app.Isolation') }}</strong></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <h5>{{ __('app.DSP signature') }}</h5>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row border border-dark" id="private-data">
+                            <div class="col-md-9 text-left">
                                 <table class="table table-sm table-borderless">
                                     @if ( app()->getLocale() == 'ro' )
-                                    <tr>
-                                        <td width="20%">{{ __('app.Name in declaration') }}:</td>
-                                        <td><strong class="text-uppercase">{{ $declaration['name'] }}</strong></td>
-                                    </tr>
-                                    <tr>
-                                        <td width="20%">{{ __('app.Surname') }}:</td>
-                                        <td><strong class="text-uppercase">{{ $declaration['surname'] }}</strong></td>
-                                    </tr>
+                                        <tr>
+                                            <td>
+                                                {{ __('app.Name in declaration') }}: <strong class="text-uppercase">{{ $declaration['name'] }}</strong>
+                                                &nbsp;&nbsp;
+                                                {{ __('app.Surname') }}: <strong class="text-uppercase">{{ $declaration['surname'] }}</strong>
+                                            </td>
+                                        </tr>
                                     @else
-                                    <tr>
-                                        <td width="20%">{{ __('app.Surname') }}:</td>
-                                        <td><strong class="text-uppercase">{{ $declaration['surname'] }}</strong></td>
-                                    </tr>
-                                    <tr>
-                                        <td width="20%">{{ __('app.Name in declaration') }}:</td>
-                                        <td><strong class="text-uppercase">{{ $declaration['name'] }}</strong></td>
-                                    </tr>
+                                        <tr>
+                                            <td>
+                                                {{ __('app.Surname') }}: <strong class="text-uppercase">{{ $declaration['surname'] }}</strong>
+                                                &nbsp;&nbsp;
+                                                {{ __('app.Name in declaration') }}: <strong class="text-uppercase">{{ $declaration['name'] }}</strong>
+                                            </td>
+                                        </tr>
                                     @endif
                                     <tr>
-                                        <td width="20%">{{ __('app.Sex') }}:</td>
                                         <td>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" id="sex-male"
-                                                       onclick="return false;"{{ $declaration['sex'] === 'M' ? 'checked' : ''
-                                                }}>
-                                                <label class="form-check-label" for="sex-male"><strong>M</strong></label>
-                                            </div>
-                                            <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="checkbox" id="sex-female"
-                                                       onclick="return false;" {{ $declaration['sex'] === 'F' ? 'checked' : ''
-                                                }}>
-                                                <label class="form-check-label" for="sex-female"><strong>F</strong></label>
-                                            </div>
+                                            {{ __('app.Date of birth v1') }}:
+                                            &nbsp;{{ __('app.Year') }} <strong>{{ $declaration['birth_date_year'] }}</strong>,
+                                            &nbsp;{{ __('app.Month') }} <strong>{{ $declaration['birth_date_month'] }}</strong>,
+                                            &nbsp;{{ __('app.Day') }} <strong>{{ $declaration['birth_date_day'] }}</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            {{ __('app.Main address') }}:<br />
+                                            {{--TODO: add id or pass address--}}
                                         </td>
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-md-6 text-left">
+                            <div class="col-md-3 text-right">
+                                <img src="{{ $qrCode }}" alt="" title="" />
+                            </div>
+                        </div>
+                        <div class="row border border-dark" id="transit-data">
+                            <div class="col-md-12 text-left">
                                 <table class="table table-sm table-borderless">
                                     <tr>
-                                        <td width="40%">{{ __('app.Travelling from country') }}:</td>
                                         <td>
+                                            {{ __('app.Travelling from and') }}:&nbsp;
                                             <strong class="text-uppercase">
                                                 {{ $declaration['travelling_from_country'] }}
                                             </strong>
+                                            @if ( strlen($declaration['itinerary']) > 0 )
+                                            <br />
+                                            {{ __('app.Transited') }} {!! $declaration['itinerary'] !!}
+                                            @endif
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width="40%">{{ __('app.City') }}:</td>
                                         <td>
+                                            {{ __('app.City from and') }}:&nbsp;
                                             <strong class="text-uppercase">
                                                 {{ $declaration['travelling_from_city'] }}
                                             </strong>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td width="40%">{{ __('app.Date') }}:</td>
                                         <td>
-                                            <strong class="text-uppercase">
-                                                {{ $declaration['travelling_from_date'] }}
-                                            </strong>
+                                            {{ __('app.Date travelling') }}:
+                                            &nbsp;{{ __('app.Year') }} <strong>{{ $declaration['travelling_date_year'] }}</strong>,
+                                            &nbsp;{{ __('app.Month') }} <strong>{{ $declaration['travelling_date_month'] }}</strong>,
+                                            &nbsp;{{ __('app.Day') }} <strong>{{ $declaration['travelling_date_day'] }}</strong>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
+                        <hr class="sub-section">
                         <div class="row">
-                            <div class="col-md-6 text-left">
-                                <table class="table table-sm table-borderless">
-                                    <tr>
-                                        <td width="40%">
-                                            @if ( $declaration['document_type'] == 'passport')
-                                            {{ __('app.Passport') }} /
-                                            <span style="text-decoration: line-through;">{{ __('app.ID') }}:</span>
-                                            @else
-                                            <span style="text-decoration: line-through;">
-                                                {{ __('app.Passport')}}
-                                            </span> / {{ __('app.ID') }}:
-                                            @endif
-                                        </td>
-                                        <td>
-                                            {{ __('app.Series')}}:
-                                            <strong class="text-uppercase">
-                                                {{ $declaration['document_series'] }}
-                                            </strong>
-                                            {{ __('app.No')}}:
-                                            <strong class="text-uppercase">
-                                                {{ $declaration['document_number'] }}
-                                            </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td width="40%">{{ __('app.Date of birth') }}</td>
-                                        <td>
-                                            <strong>
-                                                {{ $declaration['birth_date'] }}
-                                            </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td width="40%">{{ __('app.Date of arrival') }}</td>
-                                        @if (is_null($declaration['border_validated_at']))
-                                        <td>___________________</td>
+                            <div class="col-md-12 text-justify">
+                                <p class="no-margin-bottom">
+                                    {!! __('app.Self responsibility') !!}:<br />
+                                    <span class="bullet-padding-right">&#8226;</span>
+                                    {!! __('app.I have taken note of the fact that') !!}
+                                </p>
+                                <p class="no-margin-bottom">
+                                    <span class="bullet-padding-right">&#8226;</span>
+                                    {!! __('app.for the implementation of the isolation measure') !!}:
+                                </p>
+                                <div class="form-check sub-list">
+                                    <input class="form-check-input" type="checkbox" id="home-address">
+                                    <label class="form-check-label" for="home-address">
+                                        {{ __('app.Home address') }}</label>
+                                </div>
+                                <div class="form-check sub-list">
+                                    <input class="form-check-input" type="checkbox" id="first-address">
+                                    <label class="form-check-label" for="first-address">
+                                        {{ __('app.Other address') }}:
+                                        @if (strlen($declaration['travel_route']) > 0)
+                                            &nbsp;<strong>{!! $declaration['travel_route'] !!}</strong>,
                                         @else
-                                        <td>
-                                            <strong>
-                                                {{ $declaration['border_validated_at'] }}
-                                            </strong>
-                                        </td>
+                                            ____________________________________________________________________,
                                         @endif
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <img src="{{ $qrCode }}" alt="" title="" />
-                            </div>
-                        </div>
-                        <hr class="sub-section">
-                        <div class="row">
-                            <div class="col-md-12 text-justify">
-                                <p class="no-margin-bottom">
-                                    <strong>{{ __('app.I estimate that I will be staying in Romania') }}:</strong>
-                                </p>
-                                <table class="table table-bordered border border-dark">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-center align-middle" width="50px" scope="col">
-                                                {!! __('app.Table No') !!}
-                                            </th>
-                                            <th class="text-center align-middle" scope="col">{!! __('app.Table Location (town/city)') !!}</th>
-                                            <th class="text-center align-middle" scope="col">{!! __('app.Table Date of arrival') !!}</th>
-                                            <th class="text-center align-middle" scope="col">{!! __('app.Table Date of departure') !!}</th>
-                                            <th class="text-center align-middle" scope="col">{{ __('app.Table Complete address') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @if( count($declaration['isolation_addresses']) > 0)
-                                        @foreach ($declaration['isolation_addresses'] as $address)
-                                        <tr>
-                                            <td class="text-center align-middle">{{ $loop->iteration }}</td>
-                                            <td>{{ $address['city'] }}, {{ $address['county'] }}</td>
-                                            <td>{{ $address['city_arrival_date'] }}</td>
-                                            <td>{{ $address['city_departure_date'] }}</td>
-                                            <td>{{ $address['city_full_address'] }}</td>
-                                        </tr>
-                                        @endforeach
-                                    @else
-                                        @for ($i = 1; $i <= 3; $i++)
-                                        <tr>
-                                            @for ($j = 1; $j <= 5; $j++)
-                                            <td style="height: 2.5rem;"></td>
-                                            @endfor
-                                        </tr>
-                                        @endfor
-                                    @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-justify">
-                                <p class="no-margin-bottom"><strong>{{ __('app.During my stay') }}:</strong></p>
-                                <table class="table table-sm table-borderless">
-                                    <tr>
-                                        <td>
-                                            {{ __('app.Table Phone') }}: <strong>{{ $declaration['phone'] }}</strong>
-                                        </td>
-                                        <td>
-                                            {{ __('app.Table E-mail') }}: <strong>{{ $declaration['email'] }}</strong>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                        <hr class="sub-section">
-                        <div class="row">
-                            <div class="col-md-12 text-justify">
-                                <p class="no-margin-bottom"><strong>{{ __('app.Have you lived in') }}:</strong></p>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox"
-                                           onclick="return false;" {{ $declaration['q_visited'] ? 'checked' : '' }}>
-                                    <label class="form-check-label">
-                                        <strong>{{ __('app.Answer Yes') }}</strong>
                                     </label>
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox"
-                                           onclick="return false;" {{ !$declaration['q_visited'] ? 'checked' : '' }}>
-                                    <label class="form-check-label">
-                                        <strong>{{ __('app.Answer No') }}</strong>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-justify">
-                                <p class="no-margin-bottom"><strong>{{ __('app.Have you come in direct') }}:</strong></p>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox"
-                                           onclick="return false;" {{ $declaration['q_contacted'] ? 'checked' : '' }}>
-                                    <label class="form-check-label">
-                                        <strong>{{ __('app.Answer Yes') }}</strong>
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox"
-                                           onclick="return false;" {{ !$declaration['q_contacted'] ? 'checked' : '' }}>
-                                    <label class="form-check-label">
-                                        <strong>{{ __('app.Answer No') }}</strong>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-justify">
-                                <p class="no-margin-bottom"><strong>{{ __('app.Have you been hospitalized') }}:</strong></p>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox"
-                                           onclick="return false;" {{ $declaration['q_hospitalized'] ? 'checked' : '' }}>
-                                    <label class="form-check-label">
-                                        <strong>{{ __('app.Answer Yes') }}</strong>
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox"
-                                           onclick="return false;" {{ !$declaration['q_hospitalized'] ? 'checked' : '' }}>
-                                    <label class="form-check-label">
-                                        <strong>{{ __('app.Answer No') }}</strong>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-justify">
-                                <p class="no-margin-bottom"><strong>{{ __('app.Have you had one') }}:</strong></p>
-                                <table class="table table-bordered border border-dark">
-                                    <tbody>
-                                        <tr>
-                                            <td><strong class="table-padding-left">{{ __('app.Fever') }}</strong></td>
-                                            <td class="text-center">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           onclick="return false;"
-                                                        {{ $declaration['fever'] ? 'checked' : '' }}>
-                                                    <label class="form-check-label">
-                                                        <strong>{{ __('app.Answer Yes') }}</strong>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           onclick="return false;"
-                                                        {{ !$declaration['fever'] ? 'checked' : ''}}>
-                                                    <label class="form-check-label">
-                                                        <strong>{{ __('app.Answer No') }}</strong>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <strong class="table-padding-left">
-                                                    {{ __('app.Difficulty in swallowing') }}
-                                                </strong>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           onclick="return false;"
-                                                        {{ $declaration['swallow'] ? 'checked' : '' }}>
-                                                    <label class="form-check-label">
-                                                        <strong>{{ __('app.Answer Yes') }}</strong>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           onclick="return false;"
-                                                        {{ !$declaration['swallow'] ? 'checked' : ''}}>
-                                                    <label class="form-check-label">
-                                                        <strong>{{ __('app.Answer No') }}</strong>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <strong class="table-padding-left">
-                                                    {{ __('app.Difficulty in breathing') }}
-                                                </strong>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           onclick="return false;"
-                                                        {{ $declaration['breath'] ? 'checked' : '' }}>
-                                                    <label class="form-check-label">
-                                                        <strong>{{ __('app.Answer Yes') }}</strong>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           onclick="return false;"
-                                                        {{ !$declaration['breath'] ? 'checked' : ''}}>
-                                                    <label class="form-check-label">
-                                                        <strong>{{ __('app.Answer No') }}</strong>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <strong class="table-padding-left">
-                                                    {{ __('app.Intense coughing') }}
-                                                </strong>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           onclick="return false;"
-                                                        {{ $declaration['cough'] ? 'checked' : '' }}>
-                                                    <label class="form-check-label">
-                                                        <strong>{{ __('app.Answer Yes') }}</strong>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                            <td class="text-center">
-                                                <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox"
-                                                           onclick="return false;"
-                                                        {{ !$declaration['cough'] ? 'checked' : ''}}>
-                                                    <label class="form-check-label">
-                                                        <strong>{{ __('app.Answer No') }}</strong>
-                                                    </label>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <hr class="sub-section">
-                        <div class="row">
-                            <div class="col-md-12 text-justify">
-                                <p>
-                                    {!! __('app.Important notice and agreement') !!}
-                                </p>
                                 <p class="no-margin-bottom">
                                     <span class="bullet-padding-right">&#8226;</span>
-                                    {!! __('app.I am aware that the refusal') !!}
-                                </p>
-                                <p class="no-margin-bottom">
-                                    <span class="bullet-padding-right">&#8226;</span>
-                                    {!! __('app.Acknowledging the provisions') !!}&nbsp;
-                                    @if (strlen($declaration['itinerary']) > 0)
-                                       {!! $declaration['itinerary'] !!}
-                                    @else
-                                        ____________________________________________________
-                                    @endif
-                                    &nbsp;{!! __('app.and that I will follow') !!}&nbsp;
-                                    @if (strlen($declaration['border']) > 0)
-                                        <strong>{{ $declaration['border'] }}</strong>.
-                                    @else
-                                        ____________________________________________________ {{ __('app.(name)') }}.
-                                    @endif
-                                </p>
-                                <p class="no-margin-bottom">
-                                    <span class="bullet-padding-right">&#8226;</span>
-                                    {!! __('app.I declare on my own responsibility') !!}:&nbsp;
-                                    @if (strlen($declaration['travel_route']) > 0)
-                                        <strong>{!! $declaration['travel_route'] !!}</strong>,
-                                    @else
-                                        ____________________________________________________________________,
-                                    @endif
-                                    &nbsp;{!! __('app.for self-isolation or quarantine') !!}:&nbsp;
+                                    {!! __('app.I will travel by') !!}:&nbsp;
                                     @if (strlen($declaration['vehicle_registration_no']) > 0)
                                         {{ __('app.' . $declaration['vehicle_type']) }}
                                         <strong>{{ $declaration['vehicle_registration_no'] }}</strong>
                                     @else
-                                        _____________________ {{ __('app.indicate car or ambulance') }}
+                                        _______________________________
                                     @endif
-                                    &nbsp;, {{ __('app.following the route') }}:<br />
-                                    __________________________________________________________________________________ .
                                 </p>
                                 <p class="no-margin-bottom">
                                     <span class="bullet-padding-right">&#8226;</span>
-                                    {{ __('app.I agree that the provided information') }}.
+                                    {!! __('app.I agree to the use of my personal data') !!}:
+                                </p>
+                                <p class="no-margin-bottom">
+                                    <span class="bullet-padding-right">&#8226;</span>
+                                    {!! __('app.I acknowledge the provisions') !!}.
+                                </p>
+                                <p class="no-margin-bottom">
+                                    {!! __('app.During my stay in Romania I can be reached at') !!}:<br />
+                                    {{ __('app.Table Phone') }}: <strong>{{ $declaration['phone'] }}</strong><br />
+                                    {{ __('app.Table E-mail') }}: <strong>{{ $declaration['email'] }}</strong>
                                 </p>
                             </div>
                         </div>
                         <hr class="sub-section">
                         <div class="row">
+                            <div class="col-md-6 text-left">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td><strong>{{ __('app.Signature') }}</strong>:</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            @if (strlen($signature) > 0)
+                                                <img src="{{ $signature }}" alt="" title="" />
+                                            @else
+                                                ________________________________
+                                            @endif
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                             <div class="col-md-6 text-left">
                                 <table class="table table-sm table-borderless">
                                     <tr>
@@ -502,29 +278,6 @@
                                             {{ $declaration['current_date'] }},&nbsp;
                                             @if (strlen($declaration['border']) > 0)
                                                 {{ $declaration['border'] }}
-                                            @else
-                                                ________________________________
-                                            @endif
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="legend-top-margin">
-                                            <small>
-                                                {!! __('app.Legend for DSP staff') !!}
-                                            </small>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-md-6 text-left">
-                                <table class="table table-sm table-borderless">
-                                    <tr>
-                                        <td><strong>{{ __('app.Signature') }}</strong>:</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            @if (strlen($signature) > 0)
-                                                <img src="{{ $signature }}" alt="" title="" />
                                             @else
                                                 ________________________________
                                             @endif

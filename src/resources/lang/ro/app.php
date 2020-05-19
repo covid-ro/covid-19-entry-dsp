@@ -130,5 +130,38 @@ return [
         'Persoana a trecut P.T.F. la :validatedAt dar nu a fost validată încă de către DSP.',
     'The declaration was validated at :dspValidatedAt by another DSP user [:userName].' =>
         'Declarația a fost validată la :dspValidatedAt de către alt utilizator DSP [:userName].',
-    'The person did not arrived at any border checkpoint.' => 'Persoana nu s-a prezentat înca la nici un P.T.F.'
+    'The person did not arrived at any border checkpoint.' => 'Persoana nu s-a prezentat înca la nici un P.T.F.',
+
+    // version 1.1
+    'DSP measure' => 'Măsură dispusă de D.S.P',
+    'DSP signature' => 'Semnătură D.S.P.',
+    'Hospitalisation' => 'trimitere spre spital',
+    'Quarantine' => 'carantină instituționalizată',
+    'Isolation' => 'izolare la adresa declarată',
+    'Date of birth v1' => 'Data nașterii',
+    'Year' => 'anul',
+    'Month' => 'luna',
+    'Day' => 'ziua',
+    'Main address' => 'Adresa de domiciliu (potrivit actului de identitate)',
+    'Travelling from and' => 'Țara/țările din care am plecat/tranzitat',
+    'Depart from' => 'am plecat din',
+    'Transited' => 'am tranzitat',
+    'City from and' => 'Localitatea/localitățile din care am plecat/tranzitat',
+    'Date travelling' => 'Data plecării',
+    'Self responsibility' => 'Declar pe propria răspundere că',
+    'I have taken note of the fact that' => 'am luat la cunoștință faptul că, pentru a preveni răspândirea pe
+        teritoriul României a COVID-19, am obligația de a mă supune procedurilor de
+        izolare/carantinare/internare, după caz;',
+    'for the implementation of the isolation measure' => 'pentru <strong>punerea în aplicare a măsurii
+        izolării</strong>, după părăsirea perimetrului punctului de trecere a frontierei, mă voi deplasa pe
+        <strong>cea mai scurtă rută</strong> la',
+    'Home address' => 'adresa de domiciliu sau',
+    'Other address' => 'următoarea adresă',
+    'I will travel by' => 'deplasarea se va efectua cu',
+    'I agree to the use of my personal data' => 'sunt de acord ca datele cu caracter personal și informațiile
+        furnizate să fie prelucrate de autoritățile competente;',
+    'I acknowledge the provisions' => 'am luat la cunoștință de prevederile <strong>art. 326 din Codul Penal cu
+        privire la falsul în declarații și art. 352 din Codul Penal cu privire la zădărnicirea
+        combaterii bolilor</strong>.',
+    'During my stay in Romania I can be reached at' => 'Pe perioda șederii în România pot fi contactat la'
 ];
