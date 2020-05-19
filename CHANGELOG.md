@@ -1,3 +1,10 @@
+## [1.0.0] - 2020-05-19
+
+### Modify
+- CHANGELOG.md
+- fix automation
+- fix declaration.blade.php
+
 ## [0.9.8.1] - 2020-05-19
 
 ### Modify
