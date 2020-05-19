@@ -1,22 +1,22 @@
 ---
 - name: Run npm install
-  shell: cd {{deploy_helper.new_release_path}} && npm install
+  shell: cd {{deploy_helper.new_release_path}}/{{ project_source_relative_dir }} && npm install
   environment: "{{ project_environment }}"
 
 - name: Run npm dev
-  shell: cd {{deploy_helper.new_release_path}} && npm run dev
+  shell: cd {{deploy_helper.new_release_path}}/{{ project_source_relative_dir }} && npm run dev
   environment: "{{ project_environment }}"
 
 - name: Run artisan config cache
-  shell: cd {{deploy_helper.new_release_path}} && php artisan config:cache
+  shell: cd {{deploy_helper.new_release_path}}/{{ project_source_relative_dir }} && php artisan config:cache
   environment: "{{ project_environment }}"
 
 - name: Run artisan config clear
-  shell: cd {{deploy_helper.new_release_path}} && php artisan config:clear
+  shell: cd {{deploy_helper.new_release_path}}/{{ project_source_relative_dir }} && php artisan config:clear
   environment: "{{ project_environment }}"
 
 - name: Run artisan migrate
-  shell: cd {{deploy_helper.new_release_path}} && php artisan migrate --force
+  shell: cd {{deploy_helper.new_release_path}}/{{ project_source_relative_dir }} && php artisan migrate --force
   environment: "{{ project_environment }}"
 
 - name: Clear the opcache

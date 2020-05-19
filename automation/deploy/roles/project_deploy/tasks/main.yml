@@ -109,21 +109,21 @@
     dest: /home/{{ ansible_user }}/.config/composer/auth.json
 
 - name: Do composer install
-  command: "{{ project_command_for_composer_install }} chdir={{ deploy_helper.new_release_path }}/{{ project_composer_relative_dir }}"
+  command: "{{ project_command_for_composer_install }} chdir={{ deploy_helper.new_release_path }}/{{ project_source_relative_dir }}"
   environment: "{{ project_environment }}"
   when: project_has_composer
 
 - name: Check if npm dir exists
-  stat: path={{ deploy_helper.current_path }}/{{ project_npm_modules_path }}
+  stat: path={{ deploy_helper.current_path }}/{{ project_source_relative_dir }}/{{ project_npm_modules_path }}
   register: check_npm_modules_path
   when: project_copy_previous_npm_modules
 
 - name: Copy npm dir if exists to speed up npm install
-  command: /bin/cp -prT {{ deploy_helper.current_path }}/{{ project_npm_modules_path }} {{ deploy_helper.new_release_path }}/{{ project_npm_modules_path }}
+  command: /bin/cp -prT {{ deploy_helper.current_path }}/{{ project_source_relative_dir }}/{{ project_npm_modules_path }} {{ deploy_helper.new_release_path }}/{{ project_source_relative_dir }}/{{ project_npm_modules_path }}
   when: project_copy_previous_npm_modules and check_npm_modules_path.stat.exists
 
 - name: Do npm install
-  command: "{{ project_command_for_npm_install }} chdir={{ deploy_helper.new_release_path }}"
+  command: "{{ project_command_for_npm_install }} chdir={{ deploy_helper.new_release_path }}/{{ project_source_relative_dir }}"
   environment: "{{ project_environment }}"
   when: project_has_npm
 

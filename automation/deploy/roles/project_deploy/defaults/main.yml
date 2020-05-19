@@ -70,7 +70,7 @@ project_has_yarn: false
 
 # Default values to run composer install
 project_composer_binary: composer
-project_composer_relative_dir: ""
+project_source_relative_dir: ""
 project_command_for_composer_install: "{{ project_composer_binary }} install --no-ansi --no-dev --no-interaction --no-progress --optimize-autoloader --no-scripts"
 # When set to true the old vendor dir is copied to the new release to speed up composer install
 project_copy_previous_composer_vendors: false
