@@ -1,3 +1,9 @@
+## [0.9.8.1] - 2020-05-19
+
+### Modify
+- CHANGELOG.md
+- refactor automation to point webserver to src and src/storage
+
 ## [0.9.8] - 2020-05-19
 
 ### Added
