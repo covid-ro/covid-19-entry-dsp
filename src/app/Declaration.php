@@ -225,7 +225,6 @@ class Declaration
     {
         $formatedResult = [];
         $signature = '';
-        $addresses = [];
         $visitedCountries = [];
 
         if($declaration['signed']) {
@@ -264,21 +263,26 @@ class Declaration
             ->format('d');
         $formatedResult['qr_code'] = 'data:image/png;base64,' .
             base64_encode(QrCode::format('png')->size(100)->generate($declaration['code']));
-        if (count($declaration['isolation_addresses']) > 0) {
-            if ($locale === 'ro') {
-                foreach ($declaration['isolation_addresses'] as $key => $address) {
-                    $declaration['isolation_addresses'][$key]['city_arrival_date'] = Carbon::createFromFormat('Y-m-d', $address['city_arrival_date'])
-                        ->format('d m Y');
-                    $declaration['isolation_addresses'][$key]['city_departure_date'] = Carbon::createFromFormat('Y-m-d', $address['city_departure_date'])
-                        ->format('d m Y');
-                }
-            }
-            foreach ($declaration['isolation_addresses'] as $key => $address) {
-                $addresses[$key]['locality'] = $address['city'] . (($address['county'] && strlen
-                        ($address['county']) > 0) ? ', ' . $address['county'] : '');
-                $addresses[$key]['dateArrival'] = $address['city_arrival_date'];
-                $addresses[$key]['dateLeave'] = $address['city_departure_date'];
-                $addresses[$key]['fullAddress'] = $address['city_full_address'];
+        $declaration['isolation_address'] = '';
+        if($declaration['home_isolated']) {
+            $declaration['isolation_address'] = $declaration['home_address'];
+        } else {
+            if (count($declaration['isolation_addresses']) > 0) {
+                $firstIsolationAddress = $declaration['isolation_addresses'][0];
+                $declaration['isolation_address'] = __('app.City') . ' ' .
+                    $firstIsolationAddress['city'] . ' ' .
+                    __('app.Street') . ' ' .
+                    $firstIsolationAddress['street'] . ' ' .
+                    __('app.Number') . ' ' .
+                    $firstIsolationAddress['number'] . ' ' .
+                    __('app.Block') . ' ' .
+                    $firstIsolationAddress['bloc'] . ' ' .
+                    __('app.Entry') . ' ' .
+                    $firstIsolationAddress['entry'] . ' ' .
+                    __('app.Apartment') . ' ' .
+                    $firstIsolationAddress['apartment'] . ' ' .
+                    __('app.County') . ' ' .
+                    $firstIsolationAddress['county'];
             }
         }
         $declaration['fever'] = in_array('fever', $declaration['symptoms']) ?? true;
@@ -318,7 +322,7 @@ class Declaration
             'travellingDay' => $declaration['travelling_date_day'],
             'phoneNumber' => $declaration['phone'],
             'emailAddress' => $declaration['email'],
-            'addresses' => $addresses,
+            'addresses' => $declaration['isolation_address'],
             'answers' => [
                 'hasVisited' => $declaration['q_visited'],
                 'hasContacted' => $declaration['q_contacted'],
@@ -331,8 +335,7 @@ class Declaration
             'organization' => '',
             'visitedCountries' => $visitedCountries,
             'borderCrossingPoint' => $declaration['border'],
-            'destination' => (count($addresses) > 0 ? $addresses[0]['fullAddress'] . ', ' . $addresses[0]['locality']
-                : ''),
+            'destination' => $declaration['isolation_address'],
             'vehicle' => $declaration['vehicle_registration_no'],
             'route' => trim(str_replace("\n", ' ', $declaration['travel_route'])),
             'documentDate' => $declaration['current_date'],
