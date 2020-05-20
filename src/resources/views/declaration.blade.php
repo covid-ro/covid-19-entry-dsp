@@ -154,7 +154,11 @@
                                     <tr>
                                         <td>
                                             {{ __('app.Main address') }}:<br />
-                                            {{--TODO: add id or pass address--}}
+                                            @if( $declaration['home_address'] )
+                                                <strong>{{ $declaration['home_address'] }}</strong>
+                                            @else
+                                                ____________________________________________________________________
+                                            @endif
                                         </td>
                                     </tr>
                                 </table>
@@ -207,24 +211,14 @@
                                 </p>
                                 <p class="no-margin-bottom">
                                     <span class="bullet-padding-right">&#8226;</span>
-                                    {!! __('app.for the implementation of the isolation measure') !!}:
+                                    {!! __('app.for the implementation of the isolation measure') !!}
+                                    {{ __('app.Other address') }}:
+                                    @if ( strlen($declaration['isolation_address']) > 0 )
+                                        &nbsp;<strong>{!! $declaration['isolation_address'] !!}</strong>,
+                                    @else
+                                        ____________________________________________________________________,
+                                    @endif
                                 </p>
-                                <div class="form-check sub-list">
-                                    <input class="form-check-input" type="checkbox" id="home-address">
-                                    <label class="form-check-label" for="home-address">
-                                        {{ __('app.Home address') }}</label>
-                                </div>
-                                <div class="form-check sub-list">
-                                    <input class="form-check-input" type="checkbox" id="first-address">
-                                    <label class="form-check-label" for="first-address">
-                                        {{ __('app.Other address') }}:
-                                        @if (strlen($declaration['travel_route']) > 0)
-                                            &nbsp;<strong>{!! $declaration['travel_route'] !!}</strong>,
-                                        @else
-                                            ____________________________________________________________________,
-                                        @endif
-                                    </label>
-                                </div>
                                 <p class="no-margin-bottom">
                                     <span class="bullet-padding-right">&#8226;</span>
                                     {!! __('app.I will travel by') !!}:&nbsp;

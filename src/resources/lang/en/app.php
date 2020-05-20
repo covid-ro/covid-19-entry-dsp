@@ -156,5 +156,11 @@ return [
         this declaration by the competent authorities.',
     'I acknowledge the provisions' => 'I acknowledge the provisions of <strong>the art. 326 in the Penal Code
         regarding false statements and art. 352 regarding thwarting disease control</strong>.',
-    'During my stay in Romania I can be reached at' => 'During my stay in Romania I can be reached at'
+    'During my stay in Romania I can be reached at' => 'During my stay in Romania I can be reached at',
+    'Street' => 'Street',
+    'Number' => 'Number',
+    'Block' => 'Block',
+    'Entry' => 'Entry',
+    'Apartment' => 'Apartment',
+    'County' => 'County'
 ];

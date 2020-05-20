@@ -163,5 +163,11 @@ return [
     'I acknowledge the provisions' => 'am luat la cunoștință de prevederile <strong>art. 326 din Codul Penal cu
         privire la falsul în declarații și art. 352 din Codul Penal cu privire la zădărnicirea
         combaterii bolilor</strong>.',
-    'During my stay in Romania I can be reached at' => 'Pe perioda șederii în România pot fi contactat la'
+    'During my stay in Romania I can be reached at' => 'Pe perioda șederii în România pot fi contactat la',
+    'Street' => 'str.',
+    'Number' => 'nr.',
+    'Block' => 'bl.',
+    'Entry' => 'sc.',
+    'Apartment' => 'ap.',
+    'County' => 'sector/județ'
 ];
