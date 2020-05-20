@@ -1,3 +1,11 @@
+## [1.0.3] - 2020-05-20
+
+### Modify
+- CHANGELOG.md
+- translations files
+- declaration.blade.php
+- Declaration model
+
 ## [1.0.2] - 2020-05-20
 
 ### Modify
