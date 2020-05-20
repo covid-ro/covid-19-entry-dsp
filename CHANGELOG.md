@@ -1,3 +1,10 @@
+## [1.0.2] - 2020-05-20
+
+### Modify
+- CHANGELOG.md
+- pdf js files
+- pdf preview/download actions
+
 ## [1.0.1] - 2020-05-19
 
 ### Modify
