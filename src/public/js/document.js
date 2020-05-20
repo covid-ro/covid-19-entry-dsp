@@ -33,10 +33,15 @@ Document.prototype.create = function (data, signature, qrcode, output) {
 
     this.addQrCode(qrcode);
 
-    return this.doc.output(output);
+    return this.doc.output(output, this.getName(data));
 };
 
-Document.prototype.download = function (data, signature, qrcode) {
+Document.prototype.download = function (data, signature, qrcode, output) {
+
+    this.create(data, signature, qrcode, 'save');
+};
+
+Document.prototype.preview = function (data, signature, qrcode) {
 
     let content = this.create(data, signature, qrcode, 'blob');
     let file = new Blob([content], { type: 'application/pdf' });
@@ -177,15 +182,22 @@ Document.prototype.fill = function (data) {
     // footer
     this.doc.text(data.documentDate, 170, 205, { align: 'center' });
 
-
 };
 
 Document.prototype.addSignature = function (signature) {
+
+    if(!signature) {
+        return;
+    }
 
     this.doc.addImage(signature, 'PNG', 20, 205, 40, 30);
 };
 
 Document.prototype.addQrCode = function (qrcode) {
+
+    if (!qrcode) {
+        return;
+    }
 
     this.doc.addImage(qrcode, 'PNG', 185, 8, 15, 15);
 };
