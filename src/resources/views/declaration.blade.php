@@ -145,6 +145,16 @@
                                     @endif
                                     <tr>
                                         <td>
+                                            {{ __('app.CNP') }}:
+                                            @if( $declaration['cnp'] )
+                                                &nbsp;<strong>{{ $declaration['cnp'] }}</strong>
+                                            @else
+                                                &nbsp;___________________________________________
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
                                             {{ __('app.Date of birth v1') }}:
                                             &nbsp;{{ __('app.Year') }} <strong>{{ $declaration['birth_date_year'] }}</strong>,
                                             &nbsp;{{ __('app.Month') }} <strong>{{ $declaration['birth_date_month'] }}</strong>,
@@ -309,7 +319,7 @@
                                                 url:"{{ route('refresh-list') }}",
                                                 data:{refresh:true},
                                                 success:function(data){
-                                                    doc.download(dataPdf, signature, qrcode);
+                                                    doc.preview(dataPdf, signature, qrcode);
                                                 }
                                             });
                                         }else{
