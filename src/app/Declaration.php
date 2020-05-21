@@ -121,16 +121,20 @@ class Declaration
      * @param string $url
      * @param string $code
      * @param string $username
+     * @param string $measure
      *
      * @return mixed|string
      */
-    public static function registerDeclaration(string $url, string $code, string $username)
+    public static function registerDeclaration(string $url, string $code, string $username, string $measure)
     {
         try {
             $apiRequest = self::connectApi()
                 ->put(
                     $url . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR . 'dsp',
-                    ['dsp_user_name' => $username ]
+                    [
+                        'dsp_user_name' => $username,
+                        'dsp_measure'   => $measure
+                    ]
                 );
 
             if (!$apiRequest->successful()) {

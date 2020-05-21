@@ -208,12 +208,16 @@ class HomeController extends Controller
         try {
             if($request->input('code')) {
                 $code = $request->input('code');
+                $dspMeasure = $request->input('measure');
                 $userName = Auth::user()->username;
                 $errorsMessage = '';
 
-                $registerDeclaration = 'success';
-//                $registerDeclaration = Declaration::registerDeclaration(
-//                    Declaration::API_DECLARATION_URL(), $code, $userName);
+                if (!$dspMeasure) {
+                    throw new Exception(__('app.DSP measure error'));
+                }
+
+                $registerDeclaration = Declaration::registerDeclaration(
+                    Declaration::API_DECLARATION_URL(), $code, $userName, $dspMeasure);
 
                 if ($registerDeclaration !== 'success') {
                     $errorsMessage .= $registerDeclaration;
@@ -221,7 +225,8 @@ class HomeController extends Controller
 
                 if (strlen($errorsMessage) < 1) {
                     return response()->json([
-                        'success' => $registerDeclaration
+                        'success' => $registerDeclaration,
+                        'measure' => $dspMeasure
                     ]);
                 } else {
                     throw new Exception(trim($errorsMessage));

@@ -100,19 +100,22 @@
                                             <td width="70%">
                                                 <h5>{{ __('app.DSP measure') }}:</h5>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" id="hospitalisation">
+                                                    <input class="form-check-input" type="radio" name="dsp-measure"
+                                                           id="hospitalisation" value="hospital">
                                                     <label class="form-check-label" for="hospitalisation">
                                                         <strong>{{ __('app.Hospitalisation') }}</strong>;</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" id="quarantine">
+                                                    <input class="form-check-input" type="radio" name="dsp-measure"
+                                                           id="quarantine" value="quarantine">
                                                     <label class="form-check-label" for="quarantine">
                                                         <strong>{{ __('app.Quarantine') }}</strong>;</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" id="isolation">
+                                                    <input class="form-check-input" type="radio" name="dsp-measure"
+                                                           id="isolation" value="isolation">
                                                     <label class="form-check-label" for="isolation">
-                                                        <strong>{{ __('app.Isolation') }}</strong></label>
+                                                        <strong>{{ __('app.Isolation') }}</strong>;</label>
                                                 </div>
                                             </td>
                                             <td>
@@ -311,8 +314,20 @@
                                 $.ajax({
                                     type:'POST',
                                     url:"{{ route('register-declaration') }}",
-                                    data:{code:declarationCode},
+                                    data:{code:declarationCode, measure:$("input[name='dsp-measure']:checked").val()},
                                     success:function(data){
+                                        let dspMeasure = data.measure;
+                                        switch(dspMeasure) {
+                                            case 'hospital':
+                                                dataPdf.measure.hospital = true;
+                                                break;
+                                            case 'isolation':
+                                                dataPdf.measure.isolation = true;
+                                                break;
+                                            case 'quarantine':
+                                                dataPdf.measure.quarantine = true;
+                                                break;
+                                        }
                                         if($.isEmptyObject(data.error)){
                                             $.ajax({
                                                 type:'POST',
