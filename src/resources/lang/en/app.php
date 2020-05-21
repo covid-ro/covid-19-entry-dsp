@@ -163,5 +163,6 @@ return [
     'Entry' => 'Entry',
     'Apartment' => 'Apartment',
     'County' => 'County',
-    'CNP' => 'C.N.P.'
+    'CNP' => 'C.N.P.',
+    'DSP measure error' => 'Este obligatorie alegerea unei măsuri de către D.S.P.'
 ];
