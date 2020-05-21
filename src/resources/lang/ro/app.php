@@ -40,7 +40,7 @@ return [
     'Surname' => 'Prenume',
     'Sex' => 'Sex',
     'Travelling from country' => 'Țara din care ați plecat',
-    'City' => 'Localitate',
+    'City' => 'localitate',
     'Date' => 'Data',
     'Passport' => 'Pașaport',
     'ID' => 'C.I.',
@@ -169,5 +169,6 @@ return [
     'Block' => 'bl.',
     'Entry' => 'sc.',
     'Apartment' => 'ap.',
-    'County' => 'sector/județ'
+    'County' => 'sector/județ',
+    'CNP' => 'C.N.P.'
 ];

@@ -303,43 +303,27 @@ class Declaration
         }
         $declaration['current_date'] = ($locale === 'ro') ? Carbon::now()->format('d m Y') :
             Carbon::now()->format('m/d/Y');
+
         $formatedResult['pdf_data'] = [
-            'code' => $declaration['code'],
             'locale' => $locale,
+            'code' => $declaration['code'],
+            'measure' => [
+                'hospital' => false,
+                'quarantine' => false,
+                'isolation' => false
+            ],
             'lastName' => $declaration['name'],
             'firstName' => $declaration['surname'],
-            'sex' => $declaration['sex'],
-            'idCardSeries' => $declaration['document_series'],
-            'idCardNumber' => $declaration['document_number'],
-            'birthYear' => $declaration['birth_date_year'],
-            'birthMonth' => $declaration['birth_date_month'],
-            'birthDay' => $declaration['birth_date_day'],
-            'dateArrival' => $declaration['border_validated_at'],
-            'countryLeave' => $declaration['travelling_from_country'],
-            'localityLeave' => $declaration['travelling_from_city'],
-            'travellingYear' => $declaration['travelling_date_year'],
-            'travellingMonth' => $declaration['travelling_date_month'],
-            'travellingDay' => $declaration['travelling_date_day'],
-            'phoneNumber' => $declaration['phone'],
-            'emailAddress' => $declaration['email'],
-            'addresses' => $declaration['isolation_address'],
-            'answers' => [
-                'hasVisited' => $declaration['q_visited'],
-                'hasContacted' => $declaration['q_contacted'],
-                'isHospitalized' => $declaration['q_hospitalized'],
-                'hasFever' => $declaration['fever'],
-                'hasDifficultySwallow' => $declaration['swallow'],
-                'hasDifficultyBreath' => $declaration['breath'],
-                'hasIntenseCough' => $declaration['cough'],
+            'idCardNumber' => $declaration['cnp'],
+            'dateOfBirth' => [
+                'year' => $declaration['birth_date_year'],
+                'month' => $declaration['birth_date_month'],
+                'day' => $declaration['birth_date_day']
             ],
-            'organization' => '',
-            'visitedCountries' => $visitedCountries,
-            'borderCrossingPoint' => $declaration['border'],
-            'destination' => $declaration['isolation_address'],
-            'vehicle' => $declaration['vehicle_registration_no'],
-            'route' => trim(str_replace("\n", ' ', $declaration['travel_route'])),
-            'documentDate' => $declaration['current_date'],
-            'documentLocality' => $declaration['border']
+            'countryDeparture' => $declaration['travelling_from_country'],
+            'destinationAddress' => $declaration['isolation_address'],
+            'phoneNumber' => $declaration['phone'],
+            'documentDate' => $declaration['current_date']
         ];
 
         $formatedResult['declaration'] = $declaration;

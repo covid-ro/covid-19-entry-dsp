@@ -211,8 +211,9 @@ class HomeController extends Controller
                 $userName = Auth::user()->username;
                 $errorsMessage = '';
 
-                $registerDeclaration = Declaration::registerDeclaration(
-                    Declaration::API_DECLARATION_URL(), $code, $userName);
+                $registerDeclaration = 'success';
+//                $registerDeclaration = Declaration::registerDeclaration(
+//                    Declaration::API_DECLARATION_URL(), $code, $userName);
 
                 if ($registerDeclaration !== 'success') {
                     $errorsMessage .= $registerDeclaration;

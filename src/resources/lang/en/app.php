@@ -40,7 +40,7 @@ return [
     'Surname' => 'Surname',
     'Sex' => 'Gender',
     'Travelling from country' => 'The country of departure',
-    'City' => 'City/Town',
+    'City' => 'city/town',
     'Date' => 'Date',
     'Passport' => 'Passport',
     'ID' => 'I.D.',
@@ -162,5 +162,6 @@ return [
     'Block' => 'Block',
     'Entry' => 'Entry',
     'Apartment' => 'Apartment',
-    'County' => 'County'
+    'County' => 'County',
+    'CNP' => 'C.N.P.'
 ];
