@@ -175,5 +175,6 @@ return [
     'CNP' => 'C.N.P.',
     'DSP measure error' => 'Este obligatorie alegerea unei măsuri de către D.S.P.',
     'View Details' => 'Vezi detalii',
+    'Details' => 'Detalii',
     'Complete declaration' => 'Completează declarație',
 ];

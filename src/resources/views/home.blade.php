@@ -75,8 +75,8 @@
                                         <td>{{ $declaration['code'] }}</td>
                                         <td>{{ $declaration['name'] }}</td>
                                         <td>{{ $declaration['cnp'] }}</td>
-                                        <td>{{ $declaration['border_validated_at'] ?? 'N/A' }}</td>
-                                        <td>{{ $declaration['dsp_validated_at'] ?? 'N/A' }}</td>
+                                        <td>{{ $declaration['border_validated_at'] ?? '-' }}</td>
+                                        <td>{{ $declaration['dsp_validated_at'] ?? '-' }}</td>
                                         <td>{{ $declaration['phone'] }}</td>
                                         <td><a href="{{ $declaration['url'] }}">{{ __('app.View Details') }}</a></td>
                                     </tr>
