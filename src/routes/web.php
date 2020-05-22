@@ -20,7 +20,7 @@ Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
 /* App Routes */
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/{?page}', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('home');
 Route::get('/declaratii', 'HomeController@list')->name('declaratii');
 Route::get('/declaratie/{code}', 'HomeController@show')->name('declaratie');
 Route::post('/change-lang', 'HomeController@postChangeLanguage')->name('change-lang');

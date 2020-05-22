@@ -83,7 +83,7 @@
                                 @endforeach
                                 </tbody>
                             </table>
-                                {{ $users->links() }}
+                                {{ $declarations->links() }}
                         @endif
 
                     </div>

@@ -30,15 +30,15 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @param int $page
+     * @param Request $request
      * @return Factory|View
      */
-    public function index($page = 1)
+    public function index(Request $request)
     {
         if (Auth::user()->username === env('ADMIN_USER')) {
             $declarations = Declaration::all(
                 Declaration::API_DECLARATION_URL(),
-                ['page' => $page, 'per_page' => 30] //TODO paginate dinamically
+                ['page' => $request->query('page'), 'per_page' => 30] //TODO paginate dinamically
             );
 
             return view('home')->with(['declarations' => $declarations]);
