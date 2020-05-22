@@ -26,7 +26,7 @@
                     <div class="card-header">
                         {{ __('app.Dashboard') }}
                         <div class="float-right">
-                            <a href="javascript:void(0);" id="refresh-list" class="btn btn-secondary btn-sm"
+                            <a href="{{ url()->current() }}" id="refresh-list" class="btn btn-secondary btn-sm"
                                role="button"
                                aria-pressed="true">
                                 {{ __('app.Refresh declarations list') }}
@@ -62,10 +62,11 @@
                                 <tr>
                                     <th class="text-center">{{ __('app.Code') }}</th>
                                     <th class="text-center">{{ __('app.Name') }}</th>
-                                    <th class="text-center">{{ __('app.Dsp status') }}</th>
-                                    <th class="text-center">{{ __('app.Border') }}</th>
-                                    <th class="text-center">{{ __('app.Url') }}</th>
-                                    <th></th>
+                                    <th class="text-center">{{ __('app.CNP') }}</th>
+                                    <th class="text-center">{{ __('app.Border validated') }}</th>
+                                    <th class="text-center">{{ __('app.Dsp validated') }}</th>
+                                    <th class="text-center">{{ __('app.Phone') }}</th>
+                                    <th>{{ __('app.Details') }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -73,8 +74,10 @@
                                     <tr>
                                         <td>{{ $declaration['code'] }}</td>
                                         <td>{{ $declaration['name'] }}</td>
-                                        <td>{{ $declaration['dsp_status'] }}</td>
-                                        <td>{{ $declaration['checkpoint'] }}</td>
+                                        <td>{{ $declaration['cnp'] }}</td>
+                                        <td>{{ $declaration['border_validated_at'] ?? 'N/A' }}</td>
+                                        <td>{{ $declaration['dsp_validated_at'] ?? 'N/A' }}</td>
+                                        <td>{{ $declaration['phone'] }}</td>
                                         <td><a href="{{ $declaration['url'] }}">{{ __('app.View Details') }}</a></td>
                                     </tr>
                                 @endforeach
