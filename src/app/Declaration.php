@@ -266,7 +266,7 @@ class Declaration
         $declaration['birth_date_day'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
             ->format('d');
         $formatedResult['qr_code'] = 'data:image/png;base64,' .
-            base64_encode(QrCode::format('png')->size(100)->generate($declaration['code']));
+            base64_encode(QrCode::format('png')->size(100)->generate($declaration['code'] . ' ' . $declaration['cnp']));
         $declaration['isolation_address'] = '';
         if($declaration['home_isolated']) {
             $declaration['isolation_address'] = $declaration['home_address'];
