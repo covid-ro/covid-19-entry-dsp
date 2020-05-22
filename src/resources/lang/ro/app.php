@@ -115,7 +115,9 @@ return [
     'Border pass at' => 'a trecut frontiera la',
     'Border pass on' => 'pe la P.T.F.',
     'Border not pass yet' => 'nu a trecut încă frontiera',
+    'Border validated' => 'Validat poliția frontieră',
     'Dsp status' => 'Status DSP',
+    'Dsp validated' => 'Validat DSP',
     'Dsp printed at' => 'declarația a fost printată la',
     'Dsp user' => 'de către',
     'Dsp not printed yet' => 'declarația nu a fost printată încă',
@@ -171,5 +173,8 @@ return [
     'Apartment' => 'ap.',
     'County' => 'sector/județ',
     'CNP' => 'C.N.P.',
-    'DSP measure error' => 'Este obligatorie alegerea unei măsuri de către D.S.P.'
+    'DSP measure error' => 'Este obligatorie alegerea unei măsuri de către D.S.P.',
+    'View Details' => 'Vezi detalii',
+    'Details' => 'Detalii',
+    'Complete declaration' => 'Completează declarație',
 ];

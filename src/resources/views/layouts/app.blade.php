@@ -49,6 +49,9 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
                         <!-- Authentication Links -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ env('WEB_FORM_URL', '#') }}" target="_blank" rel="noopener">{{ __('app.Complete declaration') }}</a>
+                        </li>
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('auth.Login') }}</a>
