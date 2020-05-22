@@ -71,7 +71,7 @@ project_git_repo: git@github.com:citizennext/covid-19-entry-dsp.git
 project_deploy_key: files/id_rsa
 
 project_deploy_strategy: git
-project_version: "{{ branch|default('master') }}"
+project_version: "{{ branch|default('refactor-with-new-batch-of-changes') }}"
 
 project_has_composer: true
 project_source_relative_dir: src
