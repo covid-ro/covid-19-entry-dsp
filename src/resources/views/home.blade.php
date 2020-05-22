@@ -57,6 +57,7 @@
                             </div>
                         @endif
                         @if (!empty($declarations))
+                                {{ $declarations->links() }}
                             <table class="table table-striped table-bordered" id="declaratii">
                                 <thead>
                                 <tr>
