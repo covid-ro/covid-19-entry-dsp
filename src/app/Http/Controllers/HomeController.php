@@ -68,7 +68,7 @@ class HomeController extends Controller
             session()->flash('message', $declaration);
             $formatedDeclaration['declaration'] = [];
         } else {
-            $formatedDeclaration = Declaration::getDeclationColectionFormated(
+            $formatedDeclaration = Declaration::getDeclarationCollectionFormatted(
                 $declaration,
                 $countries,
                 app()->getLocale()

@@ -113,7 +113,7 @@ class Declaration
     {
         try {
             $apiRequest = self::connectApi()
-                ->get($url . DIRECTORY_SEPARATOR . 'search' . DIRECTORY_SEPARATOR . $code);
+                ->get($url  . DIRECTORY_SEPARATOR . $code);
 
             if (!$apiRequest->successful()) {
                 throw new Exception(self::returnStatus($apiRequest->status()));
@@ -174,7 +174,7 @@ class Declaration
      *
      * @return array
      */
-    public static function getDeclationColectionFormated($declaration, $countries, $locale)
+    public static function getDeclarationCollectionFormatted($declaration, $countries, $locale)
     {
         $formatedResult = [];
         $signature = '';
