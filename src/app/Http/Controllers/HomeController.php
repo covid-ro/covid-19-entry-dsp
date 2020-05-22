@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use App\Declaration;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use PeterColes\Countries\CountriesFacade;
-use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\View\View;
+use PeterColes\Countries\CountriesFacade;
 
 class HomeController extends Controller
 {
@@ -34,13 +33,21 @@ class HomeController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->username === env('ADMIN_USER')) {
+            $declarations = Declaration::all(
+                Declaration::API_DECLARATION_URL(),
+                ['page' => 1, 'per_page' => 30] //TODO paginate dinamically
+            );
+            return view('home')->with(['declarations' => $declarations]);
+        }
         return view('home');
+//        TODO handle case for DSP user
     }
 
     /**
      * Show the declaration.
      *
-     * @param string  $code
+     * @param string $code
      * @param Request $request
      *
      * @return Factory|View
@@ -56,27 +63,34 @@ class HomeController extends Controller
 
         $declaration = Declaration::find(Declaration::API_DECLARATION_URL(), $code);
 
-        if(!is_array($declaration)) {
+        if (!is_array($declaration)) {
             session()->flash('type', 'danger');
             session()->flash('message', $declaration);
             $formatedDeclaration['declaration'] = [];
         } else {
-            $formatedDeclaration = Declaration::getDeclationColectionFormated($declaration, $countries, app()->getLocale());
+            $formatedDeclaration = Declaration::getDeclationColectionFormated(
+                $declaration,
+                $countries,
+                app()->getLocale()
+            );
         }
 
-        return view('declaration', [
-            'declaration'   => $formatedDeclaration['declaration'],
-            'pdfData'       => json_encode($formatedDeclaration['pdf_data']),
-            'signature'     => $formatedDeclaration['signature'],
-            'qrCode'        => $formatedDeclaration['qr_code']
-        ]);
+        return view(
+            'declaration',
+            [
+                'declaration' => $formatedDeclaration['declaration'],
+                'pdfData' => json_encode($formatedDeclaration['pdf_data']),
+                'signature' => $formatedDeclaration['signature'],
+                'qrCode' => $formatedDeclaration['qr_code']
+            ]
+        );
     }
 
     /**
      * Return the formated declarations list
      *
      * @param Request $request
-     *
+     * TODO delete.
      * @return mixed
      * @throws Exception
      */
@@ -88,9 +102,9 @@ class HomeController extends Controller
 
         $declarations = Declaration::all(
             Declaration::API_DECLARATION_URL(),
-            ['page' => 1, 'per_page' => 1000000],
-            'datatables'
+            ['page' => 1, 'per_page' => 30]
         );
+
 
         if(!is_array($declarations)) {
             session()->flash('type', 'danger');
@@ -111,7 +125,7 @@ class HomeController extends Controller
      */
     public function postChangeLanguage(Request $request)
     {
-        if($request->input('lang')) {
+        if ($request->input('lang')) {
             $request->session()->put('language', $request->input('lang'));
             app()->setLocale($request->input('lang'));
             return back();
@@ -129,7 +143,7 @@ class HomeController extends Controller
      */
     public function postRefreshList(Request $request)
     {
-        if($request->input('refresh')) {
+        if ($request->input('refresh')) {
             Cache::forget('declarations-' . Auth::user()->username);
             return back();
         }
@@ -147,12 +161,12 @@ class HomeController extends Controller
     public function postSearchDeclaration(Request $request)
     {
         try {
-            if($request->input('code')) {
+            if ($request->input('code')) {
                 $code = $request->input('code');
                 $declaration = Declaration::find(Declaration::API_DECLARATION_URL(), $code);
                 $errorsMessage = '';
 
-                if(!is_array($declaration)) {
+                if (!is_array($declaration)) {
                     throw new Exception($declaration);
                 }
 
@@ -166,23 +180,29 @@ class HomeController extends Controller
 
                 if ($declaration['border_crossed_at'] && !$declaration['border_validated_at']) {
                     $crossedAt = Carbon::parse($declaration['border_crossed_at'])->format('d m Y H:i:s');
-                    $errorsMessage .= __('app.The person crossed border checkpoint at :crossedAt but was not validated yet.',
-                            ['crossedAt' => $crossedAt]) . ' ';
+                    $errorsMessage .= __(
+                            'app.The person crossed border checkpoint at :crossedAt but was not validated yet.',
+                            ['crossedAt' => $crossedAt]
+                        ) . ' ';
                 }
 
                 if ($declaration['dsp_validated_at'] && $declaration['dsp_user_name'] !== Auth::user()->username) {
                     $dspValidatedAt = Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
-                    $errorsMessage .= __('app.The declaration was validated at :dspValidatedAt by another DSP user [:userName].',
+                    $errorsMessage .= __(
+                            'app.The declaration was validated at :dspValidatedAt by another DSP user [:userName].',
                             [
                                 'dspValidatedAt' => $dspValidatedAt,
                                 'userName' => $declaration['dsp_user_name']
-                            ]) . ' ';
+                            ]
+                        ) . ' ';
                 }
 
                 if (strlen($errorsMessage) < 1) {
-                    return response()->json([
-                        'success' => $code
-                    ]);
+                    return response()->json(
+                        [
+                            'success' => $code
+                        ]
+                    );
                 } else {
                     throw new Exception(trim($errorsMessage));
                 }
@@ -190,9 +210,11 @@ class HomeController extends Controller
                 throw new Exception(__('app.There is no code sent.'));
             }
         } catch (Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ]);
+            return response()->json(
+                [
+                    'error' => $exception->getMessage()
+                ]
+            );
         }
     }
 
@@ -206,7 +228,7 @@ class HomeController extends Controller
     public function postRegisterDeclaration(Request $request)
     {
         try {
-            if($request->input('code')) {
+            if ($request->input('code')) {
                 $code = $request->input('code');
                 $dspMeasure = $request->input('measure');
                 $userName = Auth::user()->username;
@@ -217,17 +239,23 @@ class HomeController extends Controller
                 }
 
                 $registerDeclaration = Declaration::registerDeclaration(
-                    Declaration::API_DECLARATION_URL(), $code, $userName, $dspMeasure);
+                    Declaration::API_DECLARATION_URL(),
+                    $code,
+                    $userName,
+                    $dspMeasure
+                );
 
                 if ($registerDeclaration !== 'success') {
                     $errorsMessage .= $registerDeclaration;
                 }
 
                 if (strlen($errorsMessage) < 1) {
-                    return response()->json([
-                        'success' => $registerDeclaration,
-                        'measure' => $dspMeasure
-                    ]);
+                    return response()->json(
+                        [
+                            'success' => $registerDeclaration,
+                            'measure' => $dspMeasure
+                        ]
+                    );
                 } else {
                     throw new Exception(trim($errorsMessage));
                 }
@@ -235,9 +263,11 @@ class HomeController extends Controller
                 throw new Exception(__('app.There is no code sent.'));
             }
         } catch (Exception $exception) {
-            return response()->json([
-                'error' => $exception->getMessage()
-            ]);
+            return response()->json(
+                [
+                    'error' => $exception->getMessage()
+                ]
+            );
         }
     }
 }

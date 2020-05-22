@@ -5,8 +5,6 @@ namespace App;
 use App\Traits\ApiTrait;
 use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
 use PeterColes\Countries\CountriesFacade;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -15,50 +13,92 @@ class Declaration
     use ApiTrait;
 
     /**
-     * Set a constant with expression in value, in a static content
-     *
-     * @return string
-     */
-    public static function API_DECLARATION_URL() {
-        return env('COVID19_DSP_API') . 'declaration';
-    }
-
-    /**
      * Get all Declarations
      *
-     * @param string      $url
-     * @param array       $params
+     * @param string $url
+     * @param array $params
      * @param string|null $format
      *
      * @return array|string
      */
     public static function all(string $url, array $params, string $format = null)
     {
-        $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : 'admin' ;
-        return Cache::untilUpdated('declarations-' . Auth::user()->username, env('CACHE_DECLARATIONS_PERSISTENCE'),
-            function() use ($url, $params, $format, $user) {
-                try {
-                    $apiRequest = self::connectApi()
-                        ->get($url, $params);
+        try {
+            $apiRequest = self::connectApi()
+                ->get($url, $params);
 
-                    if (!$apiRequest->successful()) {
-                        throw new Exception(self::returnStatus($apiRequest->status()));
-                    }
-
-                    if ($apiRequest['data']) {
-                        if ($format === 'datatables') {
-                            return self::dataTablesFormat($apiRequest['data'], $user);
-                        }
-                        return $apiRequest['data'];
-                    } else {
-                        return $apiRequest['message'];
-                    }
-
-                } catch(Exception $exception) {
-                    return $exception->getMessage();
-                }
+            if (!$apiRequest->successful()) {
+                throw new Exception(self::returnStatus($apiRequest->status()));
             }
-        );
+
+            if ($apiRequest['data']) {
+                return self::dataTablesFormat($apiRequest['data']);
+            } else {
+                return $apiRequest['message'];
+            }
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    /**
+     * Format declarations collection for datatables
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    private static function dataTablesFormat(array $data ): array
+    {
+        $countries = CountriesFacade::lookup('ro_RO');
+
+        $formattedDeclarations = [];
+        foreach ($data as $key => $declaration) {
+            $formattedDeclarations[$key]['code'] = $declaration['code'];
+            $formattedDeclarations[$key]['name'] = $declaration['name'] . ' ' . $declaration['surname'];
+            $formattedDeclarations[$key]['country'] = $countries[$declaration['travelling_from_country_code']];
+            $formattedDeclarations[$key]['checkpoint'] = trim(
+                str_replace('P.T.F.', '', $declaration['border_checkpoint']['name'])
+            );
+            $formattedDeclarations[$key]['auto'] = $declaration['vehicle_registration_no'];
+            $formattedDeclarations[$key]['signed'] = $declaration['signed'];
+            $formattedDeclarations[$key]['app_status'] = is_null($declaration['created_at']) ? false : true;
+            $formattedDeclarations[$key]['border_status'] = is_null($declaration['border_validated_at']) ? false : true;
+            $formattedDeclarations[$key]['dsp_status'] = is_null($declaration['dsp_validated_at']) ? false : true;
+            $formattedDeclarations[$key]['url'] = '/declaratie/' . $declaration['code'];
+            $formattedDeclarations[$key]['phone'] = $declaration['phone'];
+            $formattedDeclarations[$key]['travelling_from_date'] = Carbon::createFromFormat(
+                'Y-m-d',
+                $declaration['travelling_from_date']
+            )
+                ->format('d m Y');
+            $formattedDeclarations[$key]['travelling_from_city'] = $declaration['travelling_from_city'] . ', ' . $countries[$declaration['travelling_from_country_code']];
+            $formattedDeclarations[$key]['itinerary_country_list'] = '';
+            if ($declaration['itinerary_country_list'] && count($declaration['itinerary_country_list']) > 0) {
+                foreach ($declaration['itinerary_country_list'] as $country) {
+                    $formattedDeclarations[$key]['itinerary_country_list'] .= $countries[$country] . ', ';
+                }
+                $formattedDeclarations[$key]['itinerary_country_list'] = substr(
+                    trim($formattedDeclarations[$key]['itinerary_country_list']),
+                    0,
+                    -1
+                );
+            }
+            $formattedDeclarations[$key]['created_at'] = is_null($declaration['created_at']) ?
+                null : Carbon::parse($declaration['created_at'])->format('d m Y H:i:s');
+            $formattedDeclarations[$key]['border_validated_at'] = is_null($declaration['border_validated_at']) ?
+                null : Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
+            $formattedDeclarations[$key]['dsp_validated_at'] = is_null($declaration['dsp_validated_at']) ?
+                null : Carbon::parse($declaration['dsp_validated_at'])->format('d m Y H:i:s');
+            $formattedDeclarations[$key]['dsp_user_name'] = is_null($declaration['dsp_validated_at']) ?
+                null : $declaration['dsp_user_name'];
+
+            // versiunea 1.1
+            $formattedDeclarations[$key]['accept_personal_data'] = $declaration['accept_personal_data'];
+            $formattedDeclarations[$key]['accept_read_law'] = $declaration['accept_read_law'];
+        }
+
+        return $formattedDeclarations;
     }
 
     /**
@@ -73,7 +113,7 @@ class Declaration
     {
         try {
             $apiRequest = self::connectApi()
-                ->get($url . DIRECTORY_SEPARATOR . $code);
+                ->get($url . DIRECTORY_SEPARATOR . 'search' . DIRECTORY_SEPARATOR . $code);
 
             if (!$apiRequest->successful()) {
                 throw new Exception(self::returnStatus($apiRequest->status()));
@@ -84,33 +124,7 @@ class Declaration
             } else {
                 return $apiRequest['message'];
             }
-
-        } catch(Exception $exception) {
-            return $exception->getMessage();
-        }
-    }
-
-    /**
-     * Get a specific signature from Declaration
-     *
-     * @param string $url
-     * @param string $code
-     *
-     * @return array|string
-     */
-    public static function getSignature(string $url, string $code)
-    {
-        try {
-            $apiRequest = self::connectApi()
-                ->get($url . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR . 'signature');
-
-            if (!$apiRequest->successful()) {
-                throw new Exception(self::returnStatus($apiRequest->status()));
-            }
-
-            return $apiRequest->json();
-
-        } catch(Exception $exception) {
+        } catch (Exception $exception) {
             return $exception->getMessage();
         }
     }
@@ -133,7 +147,7 @@ class Declaration
                     $url . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR . 'dsp',
                     [
                         'dsp_user_name' => $username,
-                        'dsp_measure'   => $measure
+                        'dsp_measure' => $measure
                     ]
                 );
 
@@ -146,74 +160,9 @@ class Declaration
             } else {
                 return $apiRequest['message'];
             }
-
-        } catch(Exception $exception) {
+        } catch (Exception $exception) {
             return $exception->getMessage();
         }
-    }
-
-    /**
-     * Format declarations collection for datatables
-     *
-     * @param array  $data
-     * @param string $user
-     *
-     * @return array
-     */
-    private static function dataTablesFormat(array $data, string $user = null) : array
-    {
-        $countries = CountriesFacade::lookup('ro_RO');
-        $formattedDeclarations = [];
-
-        foreach ($data as $key => $declaration) {
-            if($user !== 'admin') {
-                if ($user
-                    && !empty($declaration['dsp_user_name'])
-                    || $declaration['dsp_user_name'] === $user
-                    || Auth::user()->checkpoint != $declaration['border_checkpoint']['id']
-                    || empty($declaration['border_crossed_at'])
-                    || empty($declaration['border_validated_at'])
-                ) {
-                    continue;
-                }
-            }
-
-            $formattedDeclarations[$key]['code'] = $declaration['code'];
-            $formattedDeclarations[$key]['name'] = $declaration['name'] . ' ' . $declaration['surname'];
-            $formattedDeclarations[$key]['country'] = $countries[$declaration['travelling_from_country_code']];
-            $formattedDeclarations[$key]['checkpoint'] = trim(str_replace('P.T.F.', '', $declaration['border_checkpoint']['name']));
-            $formattedDeclarations[$key]['auto'] = $declaration['vehicle_registration_no'];
-            $formattedDeclarations[$key]['signed'] = $declaration['signed'];
-            $formattedDeclarations[$key]['app_status'] = is_null($declaration['created_at']) ? false : true;
-            $formattedDeclarations[$key]['border_status'] = is_null($declaration['border_validated_at']) ? false : true;
-            $formattedDeclarations[$key]['dsp_status'] = is_null($declaration['dsp_validated_at']) ? false : true;
-            $formattedDeclarations[$key]['url'] = '/declaratie/' . $declaration['code'];
-            $formattedDeclarations[$key]['phone'] = $declaration['phone'];
-            $formattedDeclarations[$key]['travelling_from_date'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
-                ->format('d m Y');
-            $formattedDeclarations[$key]['travelling_from_city'] = $declaration['travelling_from_city'] . ', ' . $countries[$declaration['travelling_from_country_code']];
-            $formattedDeclarations[$key]['itinerary_country_list'] = '';
-            if ($declaration['itinerary_country_list'] && count($declaration['itinerary_country_list']) > 0) {
-                foreach ($declaration['itinerary_country_list'] as $country) {
-                    $formattedDeclarations[$key]['itinerary_country_list'] .= $countries[$country] . ', ';
-                }
-                $formattedDeclarations[$key]['itinerary_country_list'] = substr(trim($formattedDeclarations[$key]['itinerary_country_list']), 0, -1);
-            }
-            $formattedDeclarations[$key]['created_at'] = is_null($declaration['created_at']) ?
-                null : Carbon::parse($declaration['created_at'])->format('d m Y H:i:s');
-            $formattedDeclarations[$key]['border_validated_at'] = is_null($declaration['border_validated_at']) ?
-                null : Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
-            $formattedDeclarations[$key]['dsp_validated_at'] = is_null($declaration['dsp_validated_at']) ?
-                null : Carbon::parse($declaration['dsp_validated_at'])->format('d m Y H:i:s');
-            $formattedDeclarations[$key]['dsp_user_name'] = is_null($declaration['dsp_validated_at']) ?
-                null : $declaration['dsp_user_name'];
-
-            // versiunea 1.1
-            $formattedDeclarations[$key]['accept_personal_data'] = $declaration['accept_personal_data'];
-            $formattedDeclarations[$key]['accept_read_law'] = $declaration['accept_read_law'];
-        }
-
-        return $formattedDeclarations;
     }
 
     /**
@@ -231,10 +180,10 @@ class Declaration
         $signature = '';
         $visitedCountries = [];
 
-        if($declaration['signed']) {
+        if ($declaration['signed']) {
             $signature = self::getSignature(self::API_DECLARATION_URL(), $declaration['code']);
 
-            if(is_array($signature)) {
+            if (is_array($signature)) {
                 if ($signature['status'] === 'success') {
                     $signature = $signature['signature'];
                 } else {
@@ -254,7 +203,7 @@ class Declaration
             ->format('m');
         $declaration['travelling_date_day'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
             ->format('d');
-        if(!is_null($declaration['border_crossed_at'])) {
+        if (!is_null($declaration['border_crossed_at'])) {
             $declaration['border_validated_at'] = ($locale === 'ro') ?
                 Carbon::parse($declaration['border_validated_at'])->format('d m Y') :
                 Carbon::parse($declaration['border_validated_at'])->format('Y-m-d');
@@ -268,7 +217,7 @@ class Declaration
         $formatedResult['qr_code'] = 'data:image/png;base64,' .
             base64_encode(QrCode::format('png')->size(100)->generate($declaration['code'] . ' ' . $declaration['cnp']));
         $declaration['isolation_address'] = '';
-        if($declaration['home_isolated']) {
+        if ($declaration['home_isolated']) {
             $declaration['isolation_address'] = $declaration['home_address'];
         } else {
             if (count($declaration['isolation_addresses']) > 0) {
@@ -295,7 +244,7 @@ class Declaration
         $declaration['cough'] = in_array('cough', $declaration['symptoms']) ?? true;
         $declaration['itinerary'] = '';
         if (count($declaration['itinerary_country_list']) > 0) {
-            foreach($declaration['itinerary_country_list'] as $country) {
+            foreach ($declaration['itinerary_country_list'] as $country) {
                 $visitedCountries[] = $countries[$country];
                 $declaration['itinerary'] .= '<strong>' . $countries[$country] . '</strong>, ';
             }
@@ -333,5 +282,39 @@ class Declaration
         $formatedResult['declaration'] = $declaration;
 
         return $formatedResult;
+    }
+
+    /**
+     * Get a specific signature from Declaration
+     *
+     * @param string $url
+     * @param string $code
+     *
+     * @return array|string
+     */
+    public static function getSignature(string $url, string $code)
+    {
+        try {
+            $apiRequest = self::connectApi()
+                ->get($url . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR . 'signature');
+
+            if (!$apiRequest->successful()) {
+                throw new Exception(self::returnStatus($apiRequest->status()));
+            }
+
+            return $apiRequest->json();
+        } catch (Exception $exception) {
+            return $exception->getMessage();
+        }
+    }
+
+    /**
+     * Set a constant with expression in value, in a static content
+     *
+     * @return string
+     */
+    public static function API_DECLARATION_URL()
+    {
+        return env('COVID19_DSP_API') . 'declaration';
     }
 }

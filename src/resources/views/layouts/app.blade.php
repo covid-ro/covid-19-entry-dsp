@@ -91,6 +91,9 @@
                                 </form>
                             </li>
                         @endguest
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">{{ __('Complete declaration') }}</a>
+                        </li>
                     </ul>
                 </div>
             </div>
