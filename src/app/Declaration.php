@@ -55,6 +55,7 @@ class Declaration
         $formattedDeclarations = [];
         foreach ($data as $key => $declaration) {
             $formattedDeclarations[$key]['code'] = $declaration['code'];
+            $formattedDeclarations[$key]['cnp'] = $declaration['cnp'];
             $formattedDeclarations[$key]['name'] = $declaration['name'] . ' ' . $declaration['surname'];
             $formattedDeclarations[$key]['country'] = $countries[$declaration['travelling_from_country_code']];
             $formattedDeclarations[$key]['checkpoint'] = trim(
