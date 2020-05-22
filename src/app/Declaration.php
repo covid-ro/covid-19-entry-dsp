@@ -5,6 +5,7 @@ namespace App;
 use App\Traits\ApiTrait;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Pagination\LengthAwarePaginator;
 use PeterColes\Countries\CountriesFacade;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -32,7 +33,8 @@ class Declaration
             }
 
             if ($apiRequest['data']) {
-                return self::dataTablesFormat($apiRequest['data']);
+                $data = self::dataTablesFormat($apiRequest['data']);
+                return new LengthAwarePaginator($data, $apiRequest['total'], $apiRequest['per_page'], $apiRequest['current_page']);
             } else {
                 return $apiRequest['message'];
             }

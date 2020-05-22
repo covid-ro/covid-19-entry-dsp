@@ -9,6 +9,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
@@ -29,15 +30,17 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
+     * @param int $page
      * @return Factory|View
      */
-    public function index()
+    public function index($page = 1)
     {
         if (Auth::user()->username === env('ADMIN_USER')) {
             $declarations = Declaration::all(
                 Declaration::API_DECLARATION_URL(),
-                ['page' => 1, 'per_page' => 30] //TODO paginate dinamically
+                ['page' => $page, 'per_page' => 30] //TODO paginate dinamically
             );
+
             return view('home')->with(['declarations' => $declarations]);
         }
         return view('home');
