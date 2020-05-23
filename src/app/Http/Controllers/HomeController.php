@@ -142,11 +142,15 @@ class HomeController extends Controller
                     $errorsMessage .= $code . ' ';
                 }
 
-                $declaration = Declaration::search(Declaration::API_DECLARATION_URL(), $code);
+                $declaration = Declaration::find(Declaration::API_DECLARATION_URL(), $code, true);
 
-//                if (!is_array($declaration)) {
-//                    throw new Exception($declaration);
-//                }
+                if (!is_array($declaration)) {
+                    throw new Exception($declaration);
+                }
+
+                if (count($declaration) < 1) {
+                    $errorsMessage .= __('app.No declaration with this code');
+                }
 //
 //                if (Auth::user()->checkpoint != $declaration['border_checkpoint']['id']) {
 //                    $errorsMessage .= __('app.The person chose another border checkpoint.') . ' ';

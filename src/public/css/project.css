@@ -111,6 +111,10 @@ p.no-margin-bottom {
 .form-check.sub-list {
     padding: 0 0 0 5rem;
 }
-#search-declaration {
+#search-declaration,
+#search-results {
     margin-bottom: 1rem;
+}
+#search-results {
+    display: none;
 }
