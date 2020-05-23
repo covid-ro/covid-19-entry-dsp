@@ -21,6 +21,21 @@
             </div>
         </div>
         <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form id="search-declaration">
+                    @csrf
+                    <div class="input-group input-group-sm" id="search-declaration">
+                        <input id="code" name="code" type="text" class="form-control"
+                               placeholder="{{ __('app.Declaration Code') }}"
+                               aria-label="Declaration code"/>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-dark btn-top" type="button">
+                                {{ __('app.Search') }}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             @if (Auth::user()->username === env('ADMIN_USER'))
             <div class="col-md-12">
                 <div class="card">
@@ -33,22 +48,6 @@
                                 {{ __('app.Refresh declarations list') }}
                             </a>
                         </div>
-                        @if (Auth::user()->username !== env('ADMIN_USER'))
-                            <div class="float-right">
-                                <form>
-                                    @csrf
-                                    <div class="input-group input-group-sm" id="search-declaration">
-                                        <input id="code" name="code" type="text" class="form-control"
-                                               placeholder="{{ __('app.Declaration Code') }}"
-                                               aria-label="Declaration code"/>
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-dark btn-top" type="button">
-                                                {{ __('app.Search') }}</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        @endif
                     </div>
 
                     <div class="card-body">
