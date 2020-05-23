@@ -133,27 +133,31 @@
                     data:{code:code},
                     success:function(data){
                         if($.isEmptyObject(data.error)){
-                            searchResultsCard.show();
-                            $.each(data.success, function (index, value) {
-                                let html = '<tr>';
-                                html += '<td>' + value.code + '</td>';
-                                html += '<td>' + value.name + ' ' + value.surname + '</td>';
-                                html += '<td>' + value.cnp + '</td>';
-                                html += '<td>' +
-                                    ((value.border_validated_at == null) ? '-' : value.border_validated_at) +
-                                    '</td>';
-                                html += '<td>' +
-                                    ((value.dsp_validated_at == null) ? '-' : value.dsp_validated_at) +
-                                    '</td>';
-                                html += '<td>' + value.phone + '</td>';
-                                html += '<td>' +
-                                    '<a href="/declaratie/' + value.code + '">' +
-                                    "{{ __('app.View Details') }}" +
-                                    '</a>' +
-                                    '</td>';
-                                html += '</tr>';
-                                $('#search-results-table tbody').append(html);
-                            });
+                            if(data.success.length > 1) {
+                                searchResultsCard.show();
+                                $.each(data.success, function (index, value) {
+                                    let html = '<tr>';
+                                    html += '<td>' + value.code + '</td>';
+                                    html += '<td>' + value.name + ' ' + value.surname + '</td>';
+                                    html += '<td>' + value.cnp + '</td>';
+                                    html += '<td>' +
+                                        ((value.border_validated_at == null) ? '-' : value.border_validated_at) +
+                                        '</td>';
+                                    html += '<td>' +
+                                        ((value.dsp_validated_at == null) ? '-' : value.dsp_validated_at) +
+                                        '</td>';
+                                    html += '<td>' + value.phone + '</td>';
+                                    html += '<td>' +
+                                        '<a href="/declaratie/' + value.code + '">' +
+                                        "{{ __('app.View Details') }}" +
+                                        '</a>' +
+                                        '</td>';
+                                    html += '</tr>';
+                                    $('#search-results-table tbody').append(html);
+                                });
+                            } else {
+                                window.location.href = "/declaratie/" + data.success[0].code;
+                            }
                         }else{
                             searchResultsCard.hide();
                             $('#search-results-table tbody').html('');
