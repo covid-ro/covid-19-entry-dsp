@@ -1,3 +1,8 @@
+### PROJECT SPECIFIC ###
+/.docker/docker-compose.yml
+/src/vendor/
+/src/storage/
+
 ### Laravel ###
 /vendor/
 node_modules/
