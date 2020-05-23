@@ -21,6 +21,7 @@
             </div>
         </div>
         <div class="row justify-content-center">
+            @if (Auth::user()->username === env('ADMIN_USER'))
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -90,6 +91,9 @@
                     </div>
                 </div>
             </div>
+            @else
+            {{-- TODO dsp user simplu--}}
+            @endif
         </div>
     </div>
 @endsection
