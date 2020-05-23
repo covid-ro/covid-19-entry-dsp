@@ -1,3 +1,12 @@
+## [1.1.2] - 2020-05-23
+
+### Modify
+- CHANGELOG.md
+- translations files
+- home.blade.php
+- HomeController
+- partial refactored related to [#76][4] Updates for DSP User
+
 ## [1.1.1] - 2020-05-22
 
 ### Modify
@@ -265,3 +274,4 @@
 [1]: https://github.com/citizennext/covid-19-entry-dsp/issues/78
 [2]: https://github.com/citizennext/covid-19-entry-dsp/issues/82
 [3]: https://github.com/citizennext/covid-19-entry-dsp/issues/80
+[4]: https://github.com/citizennext/covid-19-entry-dsp/issues/76
