@@ -1,3 +1,15 @@
+## [1.1.1] - 2020-05-22
+
+### Modify
+- CHANGELOG.md and README.md
+- translations files
+- declaration.blade.php
+- Declaration model
+- HomeController
+- partial refactored related to [#78][1] Updates for DSP Admin
+- all refactored related to [#82][2] QR code - new data
+- all refactored related to [#80][3] Add link in menu for all types of users to the form where to complete the declaration
+
 ## [1.1.0] - 2020-05-21
 
 ### Modify
@@ -248,3 +260,8 @@
 ### Added
 - README.md, LICENSE and CHANGELOG.md
 - initial commit
+
+
+[1]: https://github.com/citizennext/covid-19-entry-dsp/issues/78
+[2]: https://github.com/citizennext/covid-19-entry-dsp/issues/82
+[3]: https://github.com/citizennext/covid-19-entry-dsp/issues/80

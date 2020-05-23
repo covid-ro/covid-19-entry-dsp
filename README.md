@@ -66,6 +66,7 @@ COVID19_DSP_API="<url_provided_provided_by_api_maintainer>"
 COVID19_DSP_API_KEY="<key_provided_by_api_maintainer>"
 CACHE_DECLARATIONS_PERSISTENCE=5 # time in minutes for cache persistence
 ADMIN_USER='admin_dsp'
+WEB_FORM_URL="<url_provided_provided_for_web_form>"
 ```
 
 ### Run local
