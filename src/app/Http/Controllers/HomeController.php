@@ -135,45 +135,50 @@ class HomeController extends Controller
     {
         try {
             if ($request->input('code')) {
-                $code = $request->input('code');
-                $declaration = Declaration::find(Declaration::API_DECLARATION_URL(), $code);
+                $code = $this->sanitizeInput($request->input('code'), ' ');
                 $errorsMessage = '';
 
-                if (!is_array($declaration)) {
-                    throw new Exception($declaration);
+                if (substr($code, 0, 2) === 'Er') {
+                    $errorsMessage .= $code . ' ';
                 }
 
-                if (Auth::user()->checkpoint != $declaration['border_checkpoint']['id']) {
-                    $errorsMessage .= __('app.The person chose another border checkpoint.') . ' ';
-                }
+                $declaration = Declaration::search(Declaration::API_DECLARATION_URL(), $code);
 
-                if (!$declaration['border_crossed_at']) {
-                    $errorsMessage .= __('app.The person did not arrived at any border checkpoint.') . ' ';
-                }
-
-                if ($declaration['border_crossed_at'] && !$declaration['border_validated_at']) {
-                    $crossedAt = Carbon::parse($declaration['border_crossed_at'])->format('d m Y H:i:s');
-                    $errorsMessage .= __(
-                            'app.The person crossed border checkpoint at :crossedAt but was not validated yet.',
-                            ['crossedAt' => $crossedAt]
-                        ) . ' ';
-                }
-
-                if ($declaration['dsp_validated_at'] && $declaration['dsp_user_name'] !== Auth::user()->username) {
-                    $dspValidatedAt = Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
-                    $errorsMessage .= __(
-                            'app.The declaration was validated at :dspValidatedAt by another DSP user [:userName].',
-                            [
-                                'dspValidatedAt' => $dspValidatedAt,
-                                'userName' => $declaration['dsp_user_name']
-                            ]
-                        ) . ' ';
-                }
+//                if (!is_array($declaration)) {
+//                    throw new Exception($declaration);
+//                }
+//
+//                if (Auth::user()->checkpoint != $declaration['border_checkpoint']['id']) {
+//                    $errorsMessage .= __('app.The person chose another border checkpoint.') . ' ';
+//                }
+//
+//                if (!$declaration['border_crossed_at']) {
+//                    $errorsMessage .= __('app.The person did not arrived at any border checkpoint.') . ' ';
+//                }
+//
+//                if ($declaration['border_crossed_at'] && !$declaration['border_validated_at']) {
+//                    $crossedAt = Carbon::parse($declaration['border_crossed_at'])->format('d m Y H:i:s');
+//                    $errorsMessage .= __(
+//                            'app.The person crossed border checkpoint at :crossedAt but was not validated yet.',
+//                            ['crossedAt' => $crossedAt]
+//                        ) . ' ';
+//                }
+//
+//                if ($declaration['dsp_validated_at'] && $declaration['dsp_user_name'] !== Auth::user()->username) {
+//                    $dspValidatedAt = Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
+//                    $errorsMessage .= __(
+//                            'app.The declaration was validated at :dspValidatedAt by another DSP user [:userName].',
+//                            [
+//                                'dspValidatedAt' => $dspValidatedAt,
+//                                'userName' => $declaration['dsp_user_name']
+//                            ]
+//                        ) . ' ';
+//                }
 
                 if (strlen($errorsMessage) < 1) {
                     return response()->json(
                         [
-                            'success' => $code
+                            'success' => $declaration
                         ]
                     );
                 } else {
@@ -188,6 +193,32 @@ class HomeController extends Controller
                     'error' => $exception->getMessage()
                 ]
             );
+        }
+    }
+
+    /**
+     * Sanitize declaration code input
+     *
+     * @param string      $inputValue
+     * @param string|null $splitter
+     *
+     * @return string
+     */
+    public function sanitizeInput(string $inputValue, string $splitter = null): string {
+        try {
+            if(strlen($inputValue) < 1) {
+                throw new Exception(__('app.No input for sanitize provided'));
+            }
+
+            if ($splitter) {
+                $tmpArray = explode($splitter, filter_var(trim($inputValue), FILTER_SANITIZE_STRING));
+                return $tmpArray[0];
+            } else {
+                return filter_var(trim($inputValue), FILTER_SANITIZE_STRING);
+            }
+
+        } catch (Exception $exception) {
+            return $exception->getMessage();
         }
     }
 

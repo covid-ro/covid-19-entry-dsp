@@ -177,4 +177,5 @@ return [
     'View Details' => 'Vezi detalii',
     'Details' => 'Detalii',
     'Complete declaration' => 'Completează declarație',
+    'No input for sanitize provided' => 'Eroare: Nu a fost furnizat nici un cod pentru căutare.'
 ];

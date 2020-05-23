@@ -164,5 +164,6 @@ return [
     'Apartment' => 'Apartment',
     'County' => 'County',
     'CNP' => 'C.N.P.',
-    'DSP measure error' => 'Este obligatorie alegerea unei măsuri de către D.S.P.'
+    'DSP measure error' => 'Este obligatorie alegerea unei măsuri de către D.S.P.',
+    'No input for sanitize provided' => 'Error: No input for sanitize provided'
 ];

@@ -94,5 +94,45 @@
             {{-- TODO dsp user simplu--}}
             @endif
         </div>
+        <script type="text/javascript">
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('#search-declaration button').click(function(e){
+                e.preventDefault();
+                let code = $('#code').val();
+                $.ajax({
+                    type:'POST',
+                    url:"{{ route('search-declaration') }}",
+                    data:{code:code},
+                    success:function(data){
+                        if($.isEmptyObject(data.error)){
+                            console.log(data.success);
+                            // window.location.href = "/declaratie/" + data.success;
+                        }else{
+                            printAlertMsg(data.error, 'danger');
+                            setTimeout(function () {
+                                $('.ajax-msg').removeClass('alert-danger alert-success');
+                                if ($('.ajax-msg').is(':visible')){
+                                    $('.ajax-msg').fadeOut();
+                                }
+                            }, 5000)
+                        }
+                    }
+                });
+            });
+            function printAlertMsg (msg, type) {
+                $('.ajax-msg').find('span#ajax-text-message').html(msg);
+                $('.ajax-msg').addClass('alert-'+type);
+                $('.ajax-msg').show();
+            }
+            $('.alert button').click(function(e){
+                e.preventDefault();
+                $(this).parent().hide().removeClass('alert-danger alert-success');
+                return false;
+            });
+        </script>
     </div>
 @endsection
