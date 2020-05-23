@@ -115,7 +115,7 @@ return [
     'Dsp user' => 'Dsp user',
     'Dsp not printed yet' => 'Dsp not printed yet',
     'Refresh declarations list' => 'Refresh declarations list',
-    'Declaration Code' => 'Declaration Code',
+    'Declaration Code' => 'Declaration Code or C.N.P.',
     'Search' => 'Search',
     'There is no code sent.' => 'There is no code sent.',
     'The person chose another border checkpoint.' => 'The person chose another border checkpoint.',

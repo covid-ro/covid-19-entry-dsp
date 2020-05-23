@@ -22,9 +22,9 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <form id="search-declaration">
+                <form>
                     @csrf
-                    <div class="input-group input-group-sm" id="search-declaration">
+                    <div class="input-group input-group-lg" id="search-declaration">
                         <input id="code" name="code" type="text" class="form-control"
                                placeholder="{{ __('app.Declaration Code') }}"
                                aria-label="Declaration code"/>
