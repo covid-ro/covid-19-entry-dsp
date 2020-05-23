@@ -6,6 +6,7 @@ use App\Traits\ApiTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use PeterColes\Countries\CountriesFacade;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -33,8 +34,9 @@ class Declaration
             }
 
             if ($apiRequest['data']) {
-                $data = self::dataTablesFormat($apiRequest['data']);
-                return new LengthAwarePaginator($data, $apiRequest['total'], $apiRequest['per_page'], $apiRequest['current_page']);
+                $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : 'admin' ;
+                $data = self::dataTablesFormat($apiRequest['data'], $user);
+                return new LengthAwarePaginator($data, count($data), $apiRequest['per_page'], $apiRequest['current_page']);
             } else {
                 return $apiRequest['message'];
             }
@@ -46,16 +48,23 @@ class Declaration
     /**
      * Format declarations collection for datatables
      *
-     * @param array $data
+     * @param array  $data
+     * @param string $user
      *
      * @return array
      */
-    private static function dataTablesFormat(array $data ): array
+    private static function dataTablesFormat(array $data, string $user): array
     {
         $countries = CountriesFacade::lookup('ro_RO');
 
         $formattedDeclarations = [];
         foreach ($data as $key => $declaration) {
+            if($user !== 'admin') {
+                if ($user && $declaration['dsp_user_name'] !== $user) {
+                    continue;
+                }
+            }
+
             $formattedDeclarations[$key]['code'] = $declaration['code'];
             $formattedDeclarations[$key]['cnp'] = $declaration['cnp'];
             $formattedDeclarations[$key]['name'] = $declaration['name'] . ' ' . $declaration['surname'];

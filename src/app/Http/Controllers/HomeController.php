@@ -36,16 +36,25 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        if (Auth::user()->username === env('ADMIN_USER')) {
+        $perPage = ($request->session()->get('per-page')) ?
+            $request->session()->get('per-page') :
+            env('DECLARATIONS_PER_PAGE');
+
+//        if (Auth::user()->username === env('ADMIN_USER')) {
             $declarations = Declaration::all(
                 Declaration::API_DECLARATION_URL(),
-                ['page' => $request->query('page'), 'per_page' => 30] //TODO paginate dinamically
+                ['page' => $request->query('page'), 'per_page' => $perPage]
             );
-
-            return view('home')->with(['declarations' => $declarations]);
-        }
-        return view('home');
-//        TODO handle case for DSP user
+//dd($declarations);
+            return view('home')->with(
+                [
+                    'declarations' => $declarations,
+                    'perPageValues' => explode(',', env('DECLARATIONS_PER_PAGE_VALUES')),
+                    'perPage' => $perPage
+                ]);
+//        } else {
+//            return view('home');
+//        }
     }
 
     /**
@@ -109,6 +118,23 @@ class HomeController extends Controller
         if ($request->input('lang')) {
             $request->session()->put('language', $request->input('lang'));
             app()->setLocale($request->input('lang'));
+            return back();
+        }
+
+        return;
+    }
+
+    /**
+     * Change number of elements per page
+     *
+     * @param Request $request
+     *
+     * @return RedirectResponse|void
+     */
+    public function postElementsPerPage(Request $request)
+    {
+        if ($request->input('per-page')) {
+            $request->session()->put('per-page', $request->input('per-page'));
             return back();
         }
 

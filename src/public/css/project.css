@@ -118,3 +118,6 @@ p.no-margin-bottom {
 #search-results {
     display: none;
 }
+#per-page {
+    margin-right: 15px;
+}

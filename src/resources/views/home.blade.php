@@ -59,7 +59,8 @@
                 </div>
             </div>
 
-            @if (Auth::user()->username === env('ADMIN_USER'))
+{{--            @if (Auth::user()->username === env('ADMIN_USER'))--}}
+            @if (!empty($declarations) && count($declarations) > 0 )
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
@@ -79,41 +80,59 @@
                                 {{ session('status') }}
                             </div>
                         @endif
-                        @if (!empty($declarations))
+                        <div class="row">
+                            <div class="col-md-6">
                                 {{ $declarations->links() }}
-                            <table class="table table-striped table-bordered" id="declaratii">
-                                <thead>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="float-right">
+                                    <form method="POST" action="{{ route('change-pagination') }}">
+                                        @csrf
+                                        <div class="form-group row" id="change-elements-per-page">
+                                            <select id="per-page" name="per-page" class="form-control form-control"
+                                                    onchange="this.form.submit()">
+                                                @foreach( $perPageValues as $value )
+                                                    <option value="{{ $value }}"
+                                                        {{ $perPage == $value ? ' selected="selected"' : ''}}>
+                                                        {{ $value }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-striped table-bordered" id="declaratii">
+                            <thead>
+                            <tr>
+                                <th class="text-center">{{ __('app.Code') }}</th>
+                                <th class="text-center">{{ __('app.Name') }}</th>
+                                <th class="text-center">{{ __('app.CNP') }}</th>
+                                <th class="text-center">{{ __('app.Border validated') }}</th>
+                                <th class="text-center">{{ __('app.Dsp validated') }}</th>
+                                <th class="text-center">{{ __('app.Phone') }}</th>
+                                <th>{{ __('app.Details') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($declarations as $declaration)
                                 <tr>
-                                    <th class="text-center">{{ __('app.Code') }}</th>
-                                    <th class="text-center">{{ __('app.Name') }}</th>
-                                    <th class="text-center">{{ __('app.CNP') }}</th>
-                                    <th class="text-center">{{ __('app.Border validated') }}</th>
-                                    <th class="text-center">{{ __('app.Dsp validated') }}</th>
-                                    <th class="text-center">{{ __('app.Phone') }}</th>
-                                    <th>{{ __('app.Details') }}</th>
+                                    <td>{{ $declaration['code'] }}</td>
+                                    <td>{{ $declaration['name'] }}</td>
+                                    <td>{{ $declaration['cnp'] }}</td>
+                                    <td>{{ $declaration['border_validated_at'] ?? '-' }}</td>
+                                    <td>{{ $declaration['dsp_validated_at'] ?? '-' }}</td>
+                                    <td>{{ $declaration['phone'] }}</td>
+                                    <td><a href="{{ $declaration['url'] }}">{{ __('app.View Details') }}</a></td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($declarations as $declaration)
-                                    <tr>
-                                        <td>{{ $declaration['code'] }}</td>
-                                        <td>{{ $declaration['name'] }}</td>
-                                        <td>{{ $declaration['cnp'] }}</td>
-                                        <td>{{ $declaration['border_validated_at'] ?? '-' }}</td>
-                                        <td>{{ $declaration['dsp_validated_at'] ?? '-' }}</td>
-                                        <td>{{ $declaration['phone'] }}</td>
-                                        <td><a href="{{ $declaration['url'] }}">{{ __('app.View Details') }}</a></td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                                {{ $declarations->links() }}
-                        @endif
+                            @endforeach
+                            </tbody>
+                        </table>
+                        {{ $declarations->links() }}
                     </div>
                 </div>
             </div>
-            @else
-            {{-- TODO dsp user simplu--}}
             @endif
         </div>
         <script type="text/javascript">
