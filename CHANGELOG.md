@@ -4,7 +4,7 @@
 - CHANGELOG.md
 - translations files
 - home.blade.php
-- layout
+- layout.blade.php
 - CSS project file
 - HomeController
 - UserController
