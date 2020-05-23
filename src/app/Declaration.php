@@ -109,21 +109,25 @@ class Declaration
      *
      * @param string $url
      * @param string $code
+     * @param bool   $search
      *
      * @return array|string
      */
-    public static function find(string $url, string $code)
+    public static function find(string $url, string $code, bool $search = false)
     {
         try {
+            $apiRequestUrl = $search
+                ? $url . DIRECTORY_SEPARATOR . 'search' . DIRECTORY_SEPARATOR
+                : $url . DIRECTORY_SEPARATOR;
             $apiRequest = self::connectApi()
-                ->get($url  . DIRECTORY_SEPARATOR . $code);
+                ->get($apiRequestUrl . $code);
 
             if (!$apiRequest->successful()) {
                 throw new Exception(self::returnStatus($apiRequest->status()));
             }
 
             if ($apiRequest['status'] === 'success') {
-                return $apiRequest['declaration'];
+                return $search ? $apiRequest['declarations'] : $apiRequest['declaration'];
             } else {
                 return $apiRequest['message'];
             }

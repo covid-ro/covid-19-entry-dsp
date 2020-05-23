@@ -164,5 +164,10 @@ return [
     'Apartment' => 'Apartment',
     'County' => 'County',
     'CNP' => 'C.N.P.',
-    'DSP measure error' => 'Este obligatorie alegerea unei măsuri de către D.S.P.'
+    'DSP measure error' => 'Este obligatorie alegerea unei măsuri de către D.S.P.',
+    'No input for sanitize provided' => 'Error: No input for sanitize provided',
+    'No declaration with this code' => 'There is no declaration with this code or this C.N.P.',
+    'Search results' => 'Search results',
+    'Declaration [:declarationCode] has no border' => 'Declaration [:declarationCode] has no border checkpoint defined',
+    'Declaration code is not defined' => 'Declaration code is not defined'
 ];

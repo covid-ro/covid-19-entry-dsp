@@ -80,7 +80,6 @@ class UserController extends Controller
      *
      * @param Request $request
      *
-
      */
     public function postResetAllPasswords(Request $request)
     {

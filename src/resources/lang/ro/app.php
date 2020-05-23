@@ -177,4 +177,9 @@ return [
     'View Details' => 'Vezi detalii',
     'Details' => 'Detalii',
     'Complete declaration' => 'Completează declarație',
+    'No input for sanitize provided' => 'Eroare: Nu a fost furnizat nici un cod pentru căutare.',
+    'No declaration with this code' => 'Nu există nici o declarație cu acest cod sau C.N.P.',
+    'Search results' => 'Rezultate căutare',
+    'Declaration [:declarationCode] has no border' => 'Declarația [:declarationCode] nu are un P.T.F. definit',
+    'Declaration code is not defined' => 'Codul declarației nu a fost definit'
 ];
