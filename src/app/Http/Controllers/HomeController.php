@@ -90,36 +90,6 @@ class HomeController extends Controller
     }
 
     /**
-     * Return the formated declarations list
-     *
-     * @param Request $request
-     * TODO delete.
-     * @return mixed
-     * @throws Exception
-     */
-    public function list(Request $request)
-    {
-        if (!$request->ajax()) {
-            abort(403);
-        }
-
-        $declarations = Declaration::all(
-            Declaration::API_DECLARATION_URL(),
-            ['page' => 1, 'per_page' => 30]
-        );
-
-
-        if(!is_array($declarations)) {
-            session()->flash('type', 'danger');
-            session()->flash('message', $declarations);
-            $declarations = [];
-        }
-
-        return datatables()->of($declarations)
-            ->make(true);
-    }
-
-    /**
      * Change language
      *
      * @param Request $request

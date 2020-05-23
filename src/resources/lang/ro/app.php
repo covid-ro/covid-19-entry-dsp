@@ -122,7 +122,7 @@ return [
     'Dsp user' => 'de către',
     'Dsp not printed yet' => 'declarația nu a fost printată încă',
     'Refresh declarations list' => 'Reîncărcare listă declarații',
-    'Declaration Code' => 'Codul declarației',
+    'Declaration Code' => 'Codul declarației sau C.N.P.',
     'Search' => 'Caută',
     'There is no code sent.' => 'Pentru căutare trebuie introdus codul declarației.',
     'The person chose another border checkpoint.' => 'Persoana a ales alt P.T.F. în aplicația mobilă.',
