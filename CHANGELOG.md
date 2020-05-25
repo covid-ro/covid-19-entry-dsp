@@ -1,3 +1,14 @@
+## [1.2.1] - 2020-05-25
+
+### Modify
+- CHANGELOG.md and README.md
+- translations files
+- home.blade.php
+- declaration.blade.php
+- project.js
+- .env
+- automation dev environment
+
 ## [1.2.0] - 2020-05-25
 
 ### Modify
