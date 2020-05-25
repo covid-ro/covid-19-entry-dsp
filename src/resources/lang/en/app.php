@@ -169,5 +169,6 @@ return [
     'No declaration with this code' => 'There is no declaration with this code or this C.N.P.',
     'Search results' => 'Search results',
     'Declaration [:declarationCode] has no border' => 'Declaration [:declarationCode] has no border checkpoint defined',
-    'Declaration code is not defined' => 'Declaration code is not defined'
+    'Declaration code is not defined' => 'Declaration code is not defined',
+    'There is no Declaration' => 'There is no Declaration in Database'
 ];

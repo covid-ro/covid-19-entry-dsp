@@ -6,12 +6,23 @@ use App\Traits\ApiTrait;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use PeterColes\Countries\CountriesFacade;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Declaration
 {
     use ApiTrait;
+
+    /**
+     * Set a constant with expression in value, in a static content
+     *
+     * @return string
+     */
+    public static function API_DECLARATION_URL()
+    {
+        return env('COVID19_DSP_API') . 'declaration';
+    }
 
     /**
      * Get all Declarations
@@ -25,6 +36,7 @@ class Declaration
     public static function all(string $url, array $params, string $format = null)
     {
         try {
+            $params['dsp_user_name'] = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : null ;
             $apiRequest = self::connectApi()
                 ->get($url, $params);
 
@@ -33,10 +45,15 @@ class Declaration
             }
 
             if ($apiRequest['data']) {
-                $data = self::dataTablesFormat($apiRequest['data']);
+                $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : 'admin' ;
+                $data = self::dataTablesFormat($apiRequest['data'], $user);
                 return new LengthAwarePaginator($data, $apiRequest['total'], $apiRequest['per_page'], $apiRequest['current_page']);
             } else {
-                return $apiRequest['message'];
+                if(isset($apiRequest['message'])) {
+                    return $apiRequest['message'];
+                } else {
+                    return null;
+                }
             }
         } catch (Exception $exception) {
             return $exception->getMessage();
@@ -46,11 +63,12 @@ class Declaration
     /**
      * Format declarations collection for datatables
      *
-     * @param array $data
+     * @param array  $data
+     * @param string $user
      *
      * @return array
      */
-    private static function dataTablesFormat(array $data ): array
+    private static function dataTablesFormat(array $data, string $user): array
     {
         $countries = CountriesFacade::lookup('ro_RO');
 
@@ -99,6 +117,8 @@ class Declaration
             // versiunea 1.1
             $formattedDeclarations[$key]['accept_personal_data'] = $declaration['accept_personal_data'];
             $formattedDeclarations[$key]['accept_read_law'] = $declaration['accept_read_law'];
+            $formattedDeclarations[$key]['dsp_measure'] = is_null($declaration['dsp_measure']) ?
+                null : $declaration['dsp_measure'];
         }
 
         return $formattedDeclarations;
@@ -313,15 +333,5 @@ class Declaration
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
-    }
-
-    /**
-     * Set a constant with expression in value, in a static content
-     *
-     * @return string
-     */
-    public static function API_DECLARATION_URL()
-    {
-        return env('COVID19_DSP_API') . 'declaration';
     }
 }
