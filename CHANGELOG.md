@@ -1,3 +1,17 @@
+## [1.1.4] - 2020-05-25
+
+### Modify
+- CHANGELOG.md
+- README.md
+- .env
+- translations files
+- home.blade.php
+- layout.blade.php
+- CSS project file
+- HomeController
+- UserController
+- Declaration model
+
 ## [1.1.3] - 2020-05-23
 
 ### Modify
