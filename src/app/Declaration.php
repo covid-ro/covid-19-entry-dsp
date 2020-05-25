@@ -251,7 +251,7 @@ class Declaration
             base64_encode(QrCode::format('png')->size(100)->generate($declaration['code'] . ' ' . $declaration['cnp']));
         $declaration['isolation_address'] = '';
         if ($declaration['home_isolated']) {
-            $declaration['isolation_address'] = $declaration['home_address'];
+            $declaration['isolation_address'] = __('app.Main address');
         } else {
             if (count($declaration['isolation_addresses']) > 0) {
                 $firstIsolationAddress = $declaration['isolation_addresses'][0];
