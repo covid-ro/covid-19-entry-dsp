@@ -130,3 +130,5 @@ project_persistent_environment:
                        6163366264633861386466333463396562633336346662303930
   CACHE_DECLARATIONS_PERSISTENCE: 30 # time in minutes for cache persistence
   ADMIN_USER: 'admin_dsp'
+  DECLARATIONS_PER_PAGE_VALUES: "5, 10, 20, 30, 50, 100"
+  DECLARATIONS_PER_PAGE: 10
