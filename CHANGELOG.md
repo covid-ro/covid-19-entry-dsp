@@ -1,3 +1,10 @@
+## [1.2.0] - 2020-05-25
+
+### Modify
+- CHANGELOG.md
+- HomeController
+- Declaration model
+
 ## [1.1.5] - 2020-05-25
 
 ### Modify
