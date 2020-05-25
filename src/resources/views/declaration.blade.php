@@ -101,19 +101,28 @@
                                                 <h5>{{ __('app.DSP measure') }}:</h5>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="dsp-measure"
-                                                           id="hospitalisation" value="hospital">
+                                                           id="hospitalisation" value="hospital"
+                                                            {{ ($declaration['dsp_measure'] &&
+                                                            $declaration['dsp_measure'] === 'hospital') ?
+                                                            'checked' : ''}}>
                                                     <label class="form-check-label" for="hospitalisation">
                                                         <strong>{{ __('app.Hospitalisation') }}</strong>;</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="dsp-measure"
-                                                           id="quarantine" value="quarantine">
+                                                           id="quarantine" value="quarantine"
+                                                        {{ ($declaration['dsp_measure'] &&
+                                                        $declaration['dsp_measure'] === 'quarantine') ?
+                                                        'checked' : ''}}>
                                                     <label class="form-check-label" for="quarantine">
                                                         <strong>{{ __('app.Quarantine') }}</strong>;</label>
                                                 </div>
                                                 <div class="form-check form-check-inline">
                                                     <input class="form-check-input" type="radio" name="dsp-measure"
-                                                           id="isolation" value="isolation">
+                                                           id="isolation" value="isolation"
+                                                        {{ ($declaration['dsp_measure'] &&
+                                                        $declaration['dsp_measure'] === 'isolation') ?
+                                                        'checked' : ''}}>
                                                     <label class="form-check-label" for="isolation">
                                                         <strong>{{ __('app.Isolation') }}</strong>;</label>
                                                 </div>
@@ -304,17 +313,22 @@
                             });
 
                             $('#print-declaration').click( function (e) {
-                                let declarationCode = "{{ $declaration['code'] }}";
-                                let signature = '{{ $signature }}';
-                                let qrcode = '{{ $qrCode }}';
-                                let dataPdf = {!! $pdfData !!};
-                                let doc = new Document();
+                                let declarationCode     = "{{ $declaration['code'] }}";
+                                let isDspBeforeBorder   = {{ ($declaration['is_dsp_before_border']) }};
+                                let signature           = '{{ $signature }}';
+                                let qrcode              = '{{ $qrCode }}';
+                                let dataPdf             = {!! $pdfData !!};
+                                let doc                 = new Document();
 
                                 e.preventDefault();
                                 $.ajax({
                                     type:'POST',
                                     url:"{{ route('register-declaration') }}",
-                                    data:{code:declarationCode, measure:$("input[name='dsp-measure']:checked").val()},
+                                    data:{
+                                        code:declarationCode,
+                                        measure:$("input[name='dsp-measure']:checked").val(),
+                                        is_dsp: isDspBeforeBorder
+                                    },
                                     success:function(data){
                                         let dspMeasure = data.measure;
                                         switch(dspMeasure) {

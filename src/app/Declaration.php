@@ -163,10 +163,17 @@ class Declaration
      * @param string $code
      * @param string $username
      * @param string $measure
+     * @param int    $isDspBeforeBorder
      *
      * @return mixed|string
      */
-    public static function registerDeclaration(string $url, string $code, string $username, string $measure)
+    public static function registerDeclaration(
+        string $url,
+        string $code,
+        string $username,
+        string $measure,
+        int $isDspBeforeBorder = 0
+    )
     {
         try {
             $apiRequest = self::connectApi()
@@ -174,7 +181,8 @@ class Declaration
                     $url . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR . 'dsp',
                     [
                         'dsp_user_name' => $username,
-                        'dsp_measure' => $measure
+                        'dsp_measure' => $measure,
+                        'is_dsp_before_border' => $isDspBeforeBorder === 1
                     ]
                 );
 
@@ -287,6 +295,8 @@ class Declaration
         if ($declaration['border_checkpoint'] && $declaration['border_checkpoint']['status'] === 'active') {
             $declaration['border'] = trim(str_replace('P.T.F.', '', $declaration['border_checkpoint']['name']));
         }
+        $declaration['is_dsp_before_border'] = ($declaration['border_checkpoint'] &&
+            $declaration['border_checkpoint']['is_dsp_before_border'] === true) ? 1 : 0;
         $declaration['current_date'] = ($locale === 'ro') ? Carbon::now()->format('d m Y') :
             Carbon::now()->format('m/d/Y');
 
