@@ -298,6 +298,7 @@ class HomeController extends Controller
             if ($request->input('code')) {
                 $code = $request->input('code');
                 $dspMeasure = $request->input('measure');
+                $isDspBeforeBorder = $request->input('is_dsp');
                 $userName = Auth::user()->username;
                 $errorsMessage = '';
 
@@ -309,7 +310,8 @@ class HomeController extends Controller
                     Declaration::API_DECLARATION_URL(),
                     $code,
                     $userName,
-                    $dspMeasure
+                    $dspMeasure,
+                    $isDspBeforeBorder
                 );
 
                 if ($registerDeclaration !== 'success') {

@@ -163,10 +163,17 @@ class Declaration
      * @param string $code
      * @param string $username
      * @param string $measure
+     * @param int    $isDspBeforeBorder
      *
      * @return mixed|string
      */
-    public static function registerDeclaration(string $url, string $code, string $username, string $measure)
+    public static function registerDeclaration(
+        string $url,
+        string $code,
+        string $username,
+        string $measure,
+        int $isDspBeforeBorder = 0
+    )
     {
         try {
             $apiRequest = self::connectApi()
@@ -174,7 +181,8 @@ class Declaration
                     $url . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR . 'dsp',
                     [
                         'dsp_user_name' => $username,
-                        'dsp_measure' => $measure
+                        'dsp_measure' => $measure,
+                        'is_dsp_before_border' => $isDspBeforeBorder === 1
                     ]
                 );
 
@@ -235,17 +243,23 @@ class Declaration
                 Carbon::parse($declaration['border_validated_at'])->format('d m Y') :
                 Carbon::parse($declaration['border_validated_at'])->format('Y-m-d');
         }
-        $declaration['birth_date_year'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
-            ->format('Y');
-        $declaration['birth_date_month'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
-            ->format('m');
-        $declaration['birth_date_day'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
-            ->format('d');
+        if ($declaration['birth_date']) {
+            $declaration['birth_date_year']  = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+                ->format('Y');
+            $declaration['birth_date_month'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+                ->format('m');
+            $declaration['birth_date_day']   = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+                ->format('d');
+        } else {
+            $declaration['birth_date_year']  = Carbon::now()->format('Y');
+            $declaration['birth_date_month'] = Carbon::now()->format('m');
+            $declaration['birth_date_day']   = Carbon::now()->format('d');
+        }
         $formatedResult['qr_code'] = 'data:image/png;base64,' .
             base64_encode(QrCode::format('png')->size(100)->generate($declaration['code'] . ' ' . $declaration['cnp']));
         $declaration['isolation_address'] = '';
         if ($declaration['home_isolated']) {
-            $declaration['isolation_address'] = $declaration['home_address'];
+            $declaration['isolation_address'] = __('app.Main address');
         } else {
             if (count($declaration['isolation_addresses']) > 0) {
                 $firstIsolationAddress = $declaration['isolation_addresses'][0];
@@ -281,6 +295,8 @@ class Declaration
         if ($declaration['border_checkpoint'] && $declaration['border_checkpoint']['status'] === 'active') {
             $declaration['border'] = trim(str_replace('P.T.F.', '', $declaration['border_checkpoint']['name']));
         }
+        $declaration['is_dsp_before_border'] = ($declaration['border_checkpoint'] &&
+            $declaration['border_checkpoint']['is_dsp_before_border'] === true) ? 1 : 0;
         $declaration['current_date'] = ($locale === 'ro') ? Carbon::now()->format('d m Y') :
             Carbon::now()->format('m/d/Y');
 
