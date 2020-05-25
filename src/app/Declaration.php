@@ -235,12 +235,18 @@ class Declaration
                 Carbon::parse($declaration['border_validated_at'])->format('d m Y') :
                 Carbon::parse($declaration['border_validated_at'])->format('Y-m-d');
         }
-        $declaration['birth_date_year'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
-            ->format('Y');
-        $declaration['birth_date_month'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
-            ->format('m');
-        $declaration['birth_date_day'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
-            ->format('d');
+        if ($declaration['birth_date']) {
+            $declaration['birth_date_year']  = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+                ->format('Y');
+            $declaration['birth_date_month'] = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+                ->format('m');
+            $declaration['birth_date_day']   = Carbon::createFromFormat('Y-m-d', $declaration['birth_date'])
+                ->format('d');
+        } else {
+            $declaration['birth_date_year']  = Carbon::now()->format('Y');
+            $declaration['birth_date_month'] = Carbon::now()->format('m');
+            $declaration['birth_date_day']   = Carbon::now()->format('d');
+        }
         $formatedResult['qr_code'] = 'data:image/png;base64,' .
             base64_encode(QrCode::format('png')->size(100)->generate($declaration['code'] . ' ' . $declaration['cnp']));
         $declaration['isolation_address'] = '';
