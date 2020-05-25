@@ -359,7 +359,7 @@
                                             if ($('.ajax-msg').is(':visible')){
                                                 $('.ajax-msg').fadeOut();
                                             }
-                                        }, 5000)
+                                        }, {{ env('MESSAGE_VIEW_TIME') * 1000 }})
                                     }
                                 });
                             });
