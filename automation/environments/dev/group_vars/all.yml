@@ -132,3 +132,4 @@ project_persistent_environment:
   ADMIN_USER: 'admin_dsp'
   DECLARATIONS_PER_PAGE_VALUES: "5, 10, 20, 30, 50, 100"
   DECLARATIONS_PER_PAGE: 10
+  MESSAGE_VIEW_TIME: 7 #seconds before autoclose alert messages

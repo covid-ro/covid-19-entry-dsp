@@ -172,5 +172,6 @@ return [
     'Declaration code is not defined' => 'Declaration code is not defined',
     'There is no Declaration' => 'There is no Declaration in Database',
     'Developed by' => 'Developed by <a target="_blank" href="https://citizennext.ro">Citizen Next</a>
-        and <a target="_blank" href="https://sts.ro">Serviciul de Telecomunicatii Speciale'
+        and <a target="_blank" href="https://sts.ro">Serviciul de Telecomunicatii Speciale',
+    'Complete declaration' => 'Completează declarație'
 ];

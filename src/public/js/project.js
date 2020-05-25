@@ -5,6 +5,6 @@ window.addEventListener('load', function() {
         if ($('.alert').is(':visible')){
             $('.alert').fadeOut();
         }
-    }, 5000)
+    }, 7000)
 
 });

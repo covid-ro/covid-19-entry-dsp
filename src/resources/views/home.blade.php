@@ -135,6 +135,15 @@
             @endif
         </div>
         <script type="text/javascript">
+            $(document).ready(function() {
+                $(window).keydown(function(event){
+                    if(event.keyCode == 13) {
+                        event.preventDefault();
+                        return false;
+                    }
+                });
+            });
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -185,7 +194,7 @@
                                 if ($('.ajax-msg').is(':visible')){
                                     $('.ajax-msg').fadeOut();
                                 }
-                            }, 5000)
+                            }, {{ env('MESSAGE_VIEW_TIME') * 1000 }})
                         }
                     }
                 });

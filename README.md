@@ -69,6 +69,7 @@ ADMIN_USER='admin_dsp'
 WEB_FORM_URL="<url_provided_provided_for_web_form>"
 DECLARATIONS_PER_PAGE_VALUES="10, 20, 30, 50, 100"
 DECLARATIONS_PER_PAGE=10
+MESSAGE_VIEW_TIME=7 #seconds before autoclose alert messages
 ```
 
 ### Run local
