@@ -99,6 +99,12 @@
         <main class="py-4">
             @yield('content')
         </main>
+
+        <footer class="footer">
+            <div class="container text-center">
+                <span>{!! __('app.Developed by') !!}</span>
+            </div>
+        </footer>
     </div>
 </body>
 </html>
