@@ -40,21 +40,23 @@ class HomeController extends Controller
             $request->session()->get('per-page') :
             env('DECLARATIONS_PER_PAGE');
 
-//        if (Auth::user()->username === env('ADMIN_USER')) {
             $declarations = Declaration::all(
                 Declaration::API_DECLARATION_URL(),
                 ['page' => $request->query('page'), 'per_page' => $perPage]
             );
-//dd($declarations);
+
+            if(!is_object($declarations) || count($declarations->items()) < 1) {
+                session()->flash('type', 'danger');
+                session()->flash('message', $declarations);
+                $declarations = [];
+            }
+
             return view('home')->with(
                 [
                     'declarations' => $declarations,
                     'perPageValues' => explode(',', env('DECLARATIONS_PER_PAGE_VALUES')),
                     'perPage' => $perPage
                 ]);
-//        } else {
-//            return view('home');
-//        }
     }
 
     /**

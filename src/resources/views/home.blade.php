@@ -59,7 +59,6 @@
                 </div>
             </div>
 
-{{--            @if (Auth::user()->username === env('ADMIN_USER'))--}}
             @if (!empty($declarations) && count($declarations) > 0 )
             <div class="col-md-12">
                 <div class="card">

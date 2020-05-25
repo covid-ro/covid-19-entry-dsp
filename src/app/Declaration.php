@@ -15,6 +15,16 @@ class Declaration
     use ApiTrait;
 
     /**
+     * Set a constant with expression in value, in a static content
+     *
+     * @return string
+     */
+    public static function API_DECLARATION_URL()
+    {
+        return env('COVID19_DSP_API') . 'declaration';
+    }
+
+    /**
      * Get all Declarations
      *
      * @param string $url
@@ -26,6 +36,7 @@ class Declaration
     public static function all(string $url, array $params, string $format = null)
     {
         try {
+            $params['dsp_user_name'] = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : null ;
             $apiRequest = self::connectApi()
                 ->get($url, $params);
 
@@ -36,9 +47,13 @@ class Declaration
             if ($apiRequest['data']) {
                 $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : 'admin' ;
                 $data = self::dataTablesFormat($apiRequest['data'], $user);
-                return new LengthAwarePaginator($data, count($data), $apiRequest['per_page'], $apiRequest['current_page']);
+                return new LengthAwarePaginator($data, $apiRequest['total'], $apiRequest['per_page'], $apiRequest['current_page']);
             } else {
-                return $apiRequest['message'];
+                if(isset($apiRequest['message'])) {
+                    return $apiRequest['message'];
+                } else {
+                    return null;
+                }
             }
         } catch (Exception $exception) {
             return $exception->getMessage();
@@ -59,12 +74,6 @@ class Declaration
 
         $formattedDeclarations = [];
         foreach ($data as $key => $declaration) {
-            if($user !== 'admin') {
-                if ($user && $declaration['dsp_user_name'] !== $user) {
-                    continue;
-                }
-            }
-
             $formattedDeclarations[$key]['code'] = $declaration['code'];
             $formattedDeclarations[$key]['cnp'] = $declaration['cnp'];
             $formattedDeclarations[$key]['name'] = $declaration['name'] . ' ' . $declaration['surname'];
@@ -108,6 +117,8 @@ class Declaration
             // versiunea 1.1
             $formattedDeclarations[$key]['accept_personal_data'] = $declaration['accept_personal_data'];
             $formattedDeclarations[$key]['accept_read_law'] = $declaration['accept_read_law'];
+            $formattedDeclarations[$key]['dsp_measure'] = is_null($declaration['dsp_measure']) ?
+                null : $declaration['dsp_measure'];
         }
 
         return $formattedDeclarations;
@@ -322,15 +333,5 @@ class Declaration
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
-    }
-
-    /**
-     * Set a constant with expression in value, in a static content
-     *
-     * @return string
-     */
-    public static function API_DECLARATION_URL()
-    {
-        return env('COVID19_DSP_API') . 'declaration';
     }
 }
