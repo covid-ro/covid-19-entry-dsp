@@ -1,3 +1,11 @@
+## [1.1.5] - 2020-05-25
+
+### Modify
+- CHANGELOG.md
+- translations files
+- layout.blade.php
+- CSS project file
+
 ## [1.1.4] - 2020-05-25
 
 ### Modify
