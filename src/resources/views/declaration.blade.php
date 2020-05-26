@@ -204,22 +204,22 @@
                                             @endif
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            {{ __('app.City from and') }}:&nbsp;
-                                            <strong class="text-uppercase">
-                                                {{ $declaration['travelling_from_city'] }}
-                                            </strong>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            {{ __('app.Date travelling') }}:
-                                            &nbsp;{{ __('app.Year') }} <strong>{{ $declaration['travelling_date_year'] }}</strong>,
-                                            &nbsp;{{ __('app.Month') }} <strong>{{ $declaration['travelling_date_month'] }}</strong>,
-                                            &nbsp;{{ __('app.Day') }} <strong>{{ $declaration['travelling_date_day'] }}</strong>
-                                        </td>
-                                    </tr>
+{{--                                    <tr>--}}
+{{--                                        <td>--}}
+{{--                                            {{ __('app.City from and') }}:&nbsp;--}}
+{{--                                            <strong class="text-uppercase">--}}
+{{--                                                {{ $declaration['travelling_from_city'] }}--}}
+{{--                                            </strong>--}}
+{{--                                        </td>--}}
+{{--                                    </tr>--}}
+{{--                                    <tr>--}}
+{{--                                        <td>--}}
+{{--                                            {{ __('app.Date travelling') }}:--}}
+{{--                                            &nbsp;{{ __('app.Year') }} <strong>{{ $declaration['travelling_date_year'] }}</strong>,--}}
+{{--                                            &nbsp;{{ __('app.Month') }} <strong>{{ $declaration['travelling_date_month'] }}</strong>,--}}
+{{--                                            &nbsp;{{ __('app.Day') }} <strong>{{ $declaration['travelling_date_day'] }}</strong>--}}
+{{--                                        </td>--}}
+{{--                                    </tr>--}}
                                 </table>
                             </div>
                         </div>
