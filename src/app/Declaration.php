@@ -92,7 +92,7 @@ class Declaration
                 'Y-m-d',
                 $declaration['travelling_from_date']
             )
-                ->format('d m Y');
+                ->format('d-m-Y');
             $formattedDeclarations[$key]['travelling_from_city'] = $declaration['travelling_from_city'] . ', ' . $countries[$declaration['travelling_from_country_code']];
             $formattedDeclarations[$key]['itinerary_country_list'] = '';
             if ($declaration['itinerary_country_list'] && count($declaration['itinerary_country_list']) > 0) {
@@ -106,11 +106,11 @@ class Declaration
                 );
             }
             $formattedDeclarations[$key]['created_at'] = is_null($declaration['created_at']) ?
-                null : Carbon::parse($declaration['created_at'])->format('d m Y H:i:s');
+                null : Carbon::parse($declaration['created_at'])->format('d-m-Y H:i:s');
             $formattedDeclarations[$key]['border_validated_at'] = is_null($declaration['border_validated_at']) ?
-                null : Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
+                null : Carbon::parse($declaration['border_validated_at'])->format('d-m-Y H:i:s');
             $formattedDeclarations[$key]['dsp_validated_at'] = is_null($declaration['dsp_validated_at']) ?
-                null : Carbon::parse($declaration['dsp_validated_at'])->format('d m Y H:i:s');
+                null : Carbon::parse($declaration['dsp_validated_at'])->format('d-m-Y H:i:s');
             $formattedDeclarations[$key]['dsp_user_name'] = is_null($declaration['dsp_validated_at']) ?
                 null : $declaration['dsp_user_name'];
 
@@ -240,7 +240,7 @@ class Declaration
             ->format('d');
         if (!is_null($declaration['border_crossed_at'])) {
             $declaration['border_validated_at'] = ($locale === 'ro') ?
-                Carbon::parse($declaration['border_validated_at'])->format('d m Y') :
+                Carbon::parse($declaration['border_validated_at'])->format('d-m-Y') :
                 Carbon::parse($declaration['border_validated_at'])->format('Y-m-d');
         }
         if ($declaration['birth_date']) {
@@ -297,7 +297,7 @@ class Declaration
         }
         $declaration['is_dsp_before_border'] = ($declaration['border_checkpoint'] &&
             $declaration['border_checkpoint']['is_dsp_before_border'] === true) ? 1 : 0;
-        $declaration['current_date'] = ($locale === 'ro') ? Carbon::now()->format('d m Y') :
+        $declaration['current_date'] = ($locale === 'ro') ? Carbon::now()->format('d-m-Y') :
             Carbon::now()->format('m/d/Y');
 
         $formatedResult['pdf_data'] = [
