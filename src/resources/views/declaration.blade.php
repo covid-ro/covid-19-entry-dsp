@@ -241,16 +241,16 @@
                                         ____________________________________________________________________,
                                     @endif
                                 </p>
-                                <p class="no-margin-bottom">
-                                    <span class="bullet-padding-right">&#8226;</span>
-                                    {!! __('app.I will travel by') !!}:&nbsp;
-                                    @if (strlen($declaration['vehicle_registration_no']) > 0)
-                                        {{ __('app.' . $declaration['vehicle_type']) }}
-                                        <strong>{{ $declaration['vehicle_registration_no'] }}</strong>
-                                    @else
-                                        _______________________________
-                                    @endif
-                                </p>
+{{--                                <p class="no-margin-bottom">--}}
+{{--                                    <span class="bullet-padding-right">&#8226;</span>--}}
+{{--                                    {!! __('app.I will travel by') !!}:&nbsp;--}}
+{{--                                    @if (strlen($declaration['vehicle_registration_no']) > 0)--}}
+{{--                                        {{ __('app.' . $declaration['vehicle_type']) }}--}}
+{{--                                        <strong>{{ $declaration['vehicle_registration_no'] }}</strong>--}}
+{{--                                    @else--}}
+{{--                                        _______________________________--}}
+{{--                                    @endif--}}
+{{--                                </p>--}}
                                 <p class="no-margin-bottom">
                                     <span class="bullet-padding-right">&#8226;</span>
                                     {!! __('app.I agree to the use of my personal data') !!}:
@@ -262,13 +262,13 @@
                                 <p class="no-margin-bottom">
                                     {!! __('app.During my stay in Romania I can be reached at') !!}:<br />
                                     {{ __('app.Table Phone') }}: <strong>{{ $declaration['phone'] }}</strong><br />
-                                    {{ __('app.Table E-mail') }}: <strong>{{ $declaration['email'] }}</strong>
+{{--                                    {{ __('app.Table E-mail') }}: <strong>{{ $declaration['email'] }}</strong>--}}
                                 </p>
                             </div>
                         </div>
                         <hr class="sub-section">
                         <div class="row">
-                            <div class="col-md-6 text-left">
+                            <div class="col-md-6 text-center">
                                 <table class="table table-sm table-borderless">
                                     <tr>
                                         <td><strong>{{ __('app.Signature') }}</strong>:</td>
@@ -284,19 +284,19 @@
                                     </tr>
                                 </table>
                             </div>
-                            <div class="col-md-6 text-left">
+                            <div class="col-md-6 text-center">
                                 <table class="table table-sm table-borderless">
                                     <tr>
-                                        <td><strong>{{ __('app.Date and place') }}</strong>:</td>
+                                        <td><strong>{{ __('app.Date') }}</strong>:</td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            {{ $declaration['current_date'] }},&nbsp;
-                                            @if (strlen($declaration['border']) > 0)
-                                                {{ $declaration['border'] }}
-                                            @else
-                                                ________________________________
-                                            @endif
+                                            {{ $declaration['current_date'] }}
+{{--                                            @if (strlen($declaration['border']) > 0)--}}
+{{--                                                {{ $declaration['border'] }}--}}
+{{--                                            @else--}}
+{{--                                                ________________________________--}}
+{{--                                            @endif--}}
                                         </td>
                                     </tr>
                                 </table>
