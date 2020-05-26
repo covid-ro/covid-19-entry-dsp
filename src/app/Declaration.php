@@ -78,7 +78,7 @@ class Declaration
             $formattedDeclarations[$key]['cnp'] = $declaration['cnp'];
             $formattedDeclarations[$key]['name'] = $declaration['name'] . ' ' . $declaration['surname'];
             $formattedDeclarations[$key]['country'] = $countries[$declaration['travelling_from_country_code']];
-            $formattedDeclarations[$key]['checkpoint'] = trim(
+            $formattedDeclarations[$key]['checkpoint'] = is_null($declaration['border_checkpoint']) ? null : trim(
                 str_replace('P.T.F.', '', $declaration['border_checkpoint']['name'])
             );
             $formattedDeclarations[$key]['auto'] = $declaration['vehicle_registration_no'];
@@ -88,11 +88,11 @@ class Declaration
             $formattedDeclarations[$key]['dsp_status'] = is_null($declaration['dsp_validated_at']) ? false : true;
             $formattedDeclarations[$key]['url'] = '/declaratie/' . $declaration['code'];
             $formattedDeclarations[$key]['phone'] = $declaration['phone'];
-            $formattedDeclarations[$key]['travelling_from_date'] = Carbon::createFromFormat(
+            $formattedDeclarations[$key]['travelling_from_date'] = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat(
                 'Y-m-d',
                 $declaration['travelling_from_date']
             )
-                ->format('d m Y');
+                ->format('d-m-Y');
             $formattedDeclarations[$key]['travelling_from_city'] = $declaration['travelling_from_city'] . ', ' . $countries[$declaration['travelling_from_country_code']];
             $formattedDeclarations[$key]['itinerary_country_list'] = '';
             if ($declaration['itinerary_country_list'] && count($declaration['itinerary_country_list']) > 0) {
@@ -106,11 +106,11 @@ class Declaration
                 );
             }
             $formattedDeclarations[$key]['created_at'] = is_null($declaration['created_at']) ?
-                null : Carbon::parse($declaration['created_at'])->format('d m Y H:i:s');
+                null : Carbon::parse($declaration['created_at'])->format('d-m-Y H:i:s');
             $formattedDeclarations[$key]['border_validated_at'] = is_null($declaration['border_validated_at']) ?
-                null : Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
+                null : Carbon::parse($declaration['border_validated_at'])->format('d-m-Y H:i:s');
             $formattedDeclarations[$key]['dsp_validated_at'] = is_null($declaration['dsp_validated_at']) ?
-                null : Carbon::parse($declaration['dsp_validated_at'])->format('d m Y H:i:s');
+                null : Carbon::parse($declaration['dsp_validated_at'])->format('d-m-Y H:i:s');
             $formattedDeclarations[$key]['dsp_user_name'] = is_null($declaration['dsp_validated_at']) ?
                 null : $declaration['dsp_user_name'];
 
@@ -232,15 +232,15 @@ class Declaration
         }
         $formatedResult['signature'] = $signature;
         $declaration['travelling_from_country'] = $countries[$declaration['travelling_from_country_code']];
-        $declaration['travelling_date_year'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+        $declaration['travelling_date_year'] = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
             ->format('Y');
-        $declaration['travelling_date_month'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+        $declaration['travelling_date_month'] = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
             ->format('m');
-        $declaration['travelling_date_day'] = Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+        $declaration['travelling_date_day'] = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
             ->format('d');
         if (!is_null($declaration['border_crossed_at'])) {
             $declaration['border_validated_at'] = ($locale === 'ro') ?
-                Carbon::parse($declaration['border_validated_at'])->format('d m Y') :
+                Carbon::parse($declaration['border_validated_at'])->format('d-m-Y') :
                 Carbon::parse($declaration['border_validated_at'])->format('Y-m-d');
         }
         if ($declaration['birth_date']) {
@@ -297,7 +297,7 @@ class Declaration
         }
         $declaration['is_dsp_before_border'] = ($declaration['border_checkpoint'] &&
             $declaration['border_checkpoint']['is_dsp_before_border'] === true) ? 1 : 0;
-        $declaration['current_date'] = ($locale === 'ro') ? Carbon::now()->format('d m Y') :
+        $declaration['current_date'] = ($locale === 'ro') ? Carbon::now()->format('d-m-Y') :
             Carbon::now()->format('m/d/Y');
 
         $formatedResult['pdf_data'] = [

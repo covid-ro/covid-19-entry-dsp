@@ -193,7 +193,7 @@ class HomeController extends Controller
                     if ($checkpoint['is_dsp_before_border']) {
                         foreach ($declarations as $declaration) {
                             if ($declaration['dsp_validated_at'] && $declaration['dsp_user_name'] !== Auth::user()->username) {
-                                $dspValidatedAt = Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
+                                $dspValidatedAt = Carbon::parse($declaration['border_validated_at'])->format('d-m-Y H:i:s');
                                 $errorsMessage  .= __(
                                         'app.The declaration was validated at :dspValidatedAt by another DSP user [:userName].',
                                         [
@@ -210,14 +210,14 @@ class HomeController extends Controller
                                     $errorsMessage .= __('app.The person chose another border checkpoint.') . '<br/ >';
                                 } else {
                                     if ($declaration['border_crossed_at'] && !$declaration['border_validated_at']) {
-                                        $crossedAt = Carbon::parse($declaration['border_crossed_at'])->format('d m Y H:i:s');
+                                        $crossedAt = Carbon::parse($declaration['border_crossed_at'])->format('d-m-Y H:i:s');
                                         $errorsMessage .= __(
                                                 'app.The person crossed border checkpoint at :crossedAt but was not validated yet.',
                                                 ['crossedAt' => $crossedAt]
                                             ) . '<br/ >';
                                     } else {
                                         if ($declaration['dsp_validated_at'] && $declaration['dsp_user_name'] !== Auth::user()->username) {
-                                            $dspValidatedAt = Carbon::parse($declaration['border_validated_at'])->format('d m Y H:i:s');
+                                            $dspValidatedAt = Carbon::parse($declaration['border_validated_at'])->format('d-m-Y H:i:s');
                                             $errorsMessage .= __(
                                                     'app.The declaration was validated at :dspValidatedAt by another DSP user [:userName].',
                                                     [

@@ -96,6 +96,7 @@ return [
     'following the route' => 'urmând traseul',
     'I agree that the provided information' => 'Sunt de acord că informațiile furnizate pot fi consultate și prelucrate de către autoritățile competente.',
     'Date and place' => 'Data și locul',
+    'Date' => 'Data',
     'Signature' => 'Semnătură',
     'Legend for DSP staff' => '<strong>Legendă pentru personalul DSP</strong>:<br />' .
         'Risc crescut de contagiozitate = "DA" la punctul 4<br />' .
