@@ -1,3 +1,12 @@
+## [1.2.2] - 2020-05-26
+
+### Modify
+- CHANGELOG.md
+- translations files
+- declaration.blade.php
+- HomeController
+- Declaration model
+
 ## [1.2.1] - 2020-05-25
 
 ### Modify
