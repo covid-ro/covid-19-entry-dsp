@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use PeterColes\Countries\CountriesFacade;
+use RuntimeException;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class Declaration
@@ -19,7 +20,7 @@ class Declaration
      *
      * @return string
      */
-    public static function API_DECLARATION_URL()
+    public static function API_DECLARATION_URL(): string
     {
         return env('COVID19_DSP_API') . 'declaration';
     }
@@ -27,8 +28,8 @@ class Declaration
     /**
      * Get all Declarations
      *
-     * @param string $url
-     * @param array $params
+     * @param string      $url
+     * @param array       $params
      * @param string|null $format
      *
      * @return array|string
@@ -36,32 +37,28 @@ class Declaration
     public static function all(string $url, array $params, string $format = null)
     {
         try {
-            $params['dsp_user_name'] = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : null ;
-            $apiRequest = self::connectApi()
+            $params['dsp_user_name'] = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : null;
+            $apiRequest              = self::connectApi()
                 ->get($url, $params);
 
             if (!$apiRequest->successful()) {
-                throw new Exception(self::returnStatus($apiRequest->status()));
+                throw new RuntimeException(self::returnStatus($apiRequest->status()));
             }
 
             if ($apiRequest['data']) {
-                $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : 'admin' ;
+                $user = (Auth::user()->username !== env('ADMIN_USER')) ? Auth::user()->username : 'admin';
                 $data = self::dataTablesFormat($apiRequest['data'], $user);
                 return new LengthAwarePaginator($data, $apiRequest['total'], $apiRequest['per_page'], $apiRequest['current_page']);
-            } else {
-                if(isset($apiRequest['message'])) {
-                    return $apiRequest['message'];
-                } else {
-                    return null;
-                }
             }
+
+            return $apiRequest['message'] ?? null;
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
     }
 
     /**
-     * Format declarations collection for datatables
+     * Format declarations collection
      *
      * @param array  $data
      * @param string $user
@@ -74,26 +71,26 @@ class Declaration
 
         $formattedDeclarations = [];
         foreach ($data as $key => $declaration) {
-            $formattedDeclarations[$key]['code'] = $declaration['code'];
-            $formattedDeclarations[$key]['cnp'] = $declaration['cnp'];
-            $formattedDeclarations[$key]['name'] = $declaration['name'] . ' ' . $declaration['surname'];
-            $formattedDeclarations[$key]['country'] = $countries[$declaration['travelling_from_country_code']];
-            $formattedDeclarations[$key]['checkpoint'] = is_null($declaration['border_checkpoint']) ? null : trim(
+            $formattedDeclarations[$key]['code']                   = $declaration['code'];
+            $formattedDeclarations[$key]['cnp']                    = $declaration['cnp'];
+            $formattedDeclarations[$key]['name']                   = $declaration['name'] . ' ' . $declaration['surname'];
+            $formattedDeclarations[$key]['country']                = $countries[$declaration['travelling_from_country_code']];
+            $formattedDeclarations[$key]['checkpoint']             = is_null($declaration['border_checkpoint']) ? null : trim(
                 str_replace('P.T.F.', '', $declaration['border_checkpoint']['name'])
             );
-            $formattedDeclarations[$key]['auto'] = $declaration['vehicle_registration_no'];
-            $formattedDeclarations[$key]['signed'] = $declaration['signed'];
-            $formattedDeclarations[$key]['app_status'] = is_null($declaration['created_at']) ? false : true;
-            $formattedDeclarations[$key]['border_status'] = is_null($declaration['border_validated_at']) ? false : true;
-            $formattedDeclarations[$key]['dsp_status'] = is_null($declaration['dsp_validated_at']) ? false : true;
-            $formattedDeclarations[$key]['url'] = '/declaratie/' . $declaration['code'];
-            $formattedDeclarations[$key]['phone'] = $declaration['phone'];
-            $formattedDeclarations[$key]['travelling_from_date'] = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat(
+            $formattedDeclarations[$key]['auto']                   = $declaration['vehicle_registration_no'];
+            $formattedDeclarations[$key]['signed']                 = $declaration['signed'];
+            $formattedDeclarations[$key]['app_status']             = is_null($declaration['created_at']) ? false : true;
+            $formattedDeclarations[$key]['border_status']          = is_null($declaration['border_validated_at']) ? false : true;
+            $formattedDeclarations[$key]['dsp_status']             = is_null($declaration['dsp_validated_at']) ? false : true;
+            $formattedDeclarations[$key]['url']                    = '/declaratie/' . $declaration['code'];
+            $formattedDeclarations[$key]['phone']                  = $declaration['phone'];
+            $formattedDeclarations[$key]['travelling_from_date']   = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat(
                 'Y-m-d',
                 $declaration['travelling_from_date']
             )
                 ->format('d-m-Y');
-            $formattedDeclarations[$key]['travelling_from_city'] = $declaration['travelling_from_city'] . ', ' . $countries[$declaration['travelling_from_country_code']];
+            $formattedDeclarations[$key]['travelling_from_city']   = $declaration['travelling_from_city'] . ', ' . $countries[$declaration['travelling_from_country_code']];
             $formattedDeclarations[$key]['itinerary_country_list'] = '';
             if ($declaration['itinerary_country_list'] && count($declaration['itinerary_country_list']) > 0) {
                 foreach ($declaration['itinerary_country_list'] as $country) {
@@ -105,20 +102,20 @@ class Declaration
                     -1
                 );
             }
-            $formattedDeclarations[$key]['created_at'] = is_null($declaration['created_at']) ?
+            $formattedDeclarations[$key]['created_at']          = is_null($declaration['created_at']) ?
                 null : Carbon::parse($declaration['created_at'])->format('d-m-Y H:i:s');
             $formattedDeclarations[$key]['border_validated_at'] = is_null($declaration['border_validated_at']) ?
                 null : Carbon::parse($declaration['border_validated_at'])->format('d-m-Y H:i:s');
-            $formattedDeclarations[$key]['dsp_validated_at'] = is_null($declaration['dsp_validated_at']) ?
+            $formattedDeclarations[$key]['dsp_validated_at']    = is_null($declaration['dsp_validated_at']) ?
                 null : Carbon::parse($declaration['dsp_validated_at'])->format('d-m-Y H:i:s');
-            $formattedDeclarations[$key]['dsp_user_name'] = is_null($declaration['dsp_validated_at']) ?
+            $formattedDeclarations[$key]['dsp_user_name']       = is_null($declaration['dsp_validated_at']) ?
                 null : $declaration['dsp_user_name'];
 
-            // versiunea 1.1
+            // version 1.1
             $formattedDeclarations[$key]['accept_personal_data'] = $declaration['accept_personal_data'];
-            $formattedDeclarations[$key]['accept_read_law'] = $declaration['accept_read_law'];
-            $formattedDeclarations[$key]['dsp_measure'] = is_null($declaration['dsp_measure']) ?
-                null : $declaration['dsp_measure'];
+            $formattedDeclarations[$key]['accept_read_law']      = $declaration['accept_read_law'];
+            $formattedDeclarations[$key]['dsp_measure']          = is_null($declaration['dsp_measure']) ?
+                'isolation' : $declaration['dsp_measure'];
         }
 
         return $formattedDeclarations;
@@ -139,7 +136,7 @@ class Declaration
             $apiRequestUrl = $search
                 ? $url . DIRECTORY_SEPARATOR . 'search' . DIRECTORY_SEPARATOR
                 : $url . DIRECTORY_SEPARATOR;
-            $apiRequest = self::connectApi()
+            $apiRequest    = self::connectApi()
                 ->get($apiRequestUrl . $code);
 
             if (!$apiRequest->successful()) {
@@ -148,9 +145,9 @@ class Declaration
 
             if ($apiRequest['status'] === 'success') {
                 return $search ? $apiRequest['declarations'] : $apiRequest['declaration'];
-            } else {
-                return $apiRequest['message'];
             }
+
+            return $apiRequest['message'];
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -180,8 +177,8 @@ class Declaration
                 ->put(
                     $url . DIRECTORY_SEPARATOR . $code . DIRECTORY_SEPARATOR . 'dsp',
                     [
-                        'dsp_user_name' => $username,
-                        'dsp_measure' => $measure,
+                        'dsp_user_name'        => $username,
+                        'dsp_measure'          => $measure,
                         'is_dsp_before_border' => $isDspBeforeBorder === 1
                     ]
                 );
@@ -192,9 +189,9 @@ class Declaration
 
             if ($apiRequest['status'] === 'success') {
                 return 'success';
-            } else {
-                return $apiRequest['message'];
             }
+
+            return $apiRequest['message'];
         } catch (Exception $exception) {
             return $exception->getMessage();
         }
@@ -209,10 +206,10 @@ class Declaration
      *
      * @return array
      */
-    public static function getDeclarationCollectionFormatted($declaration, $countries, $locale)
+    public static function getDeclarationCollectionFormatted($declaration, $countries, $locale): array
     {
-        $formatedResult = [];
-        $signature = '';
+        $formattedResult  = [];
+        $signature        = '';
         $visitedCountries = [];
 
         if ($declaration['signed']) {
@@ -230,13 +227,13 @@ class Declaration
                 $signature = '';
             }
         }
-        $formatedResult['signature'] = $signature;
+        $formattedResult['signature']           = $signature;
         $declaration['travelling_from_country'] = $countries[$declaration['travelling_from_country_code']];
-        $declaration['travelling_date_year'] = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+        $declaration['travelling_date_year']    = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
             ->format('Y');
-        $declaration['travelling_date_month'] = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+        $declaration['travelling_date_month']   = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
             ->format('m');
-        $declaration['travelling_date_day'] = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
+        $declaration['travelling_date_day']     = is_null($declaration['travelling_from_date']) ? null : Carbon::createFromFormat('Y-m-d', $declaration['travelling_from_date'])
             ->format('d');
         if (!is_null($declaration['border_crossed_at'])) {
             $declaration['border_validated_at'] = ($locale === 'ro') ?
@@ -255,38 +252,36 @@ class Declaration
             $declaration['birth_date_month'] = Carbon::now()->format('m');
             $declaration['birth_date_day']   = Carbon::now()->format('d');
         }
-        $formatedResult['qr_code'] = 'data:image/png;base64,' .
+        $formattedResult['qr_code']       = 'data:image/png;base64,' .
             base64_encode(QrCode::format('png')->size(100)->generate($declaration['code'] . ' ' . $declaration['cnp']));
         $declaration['isolation_address'] = '';
         if ($declaration['home_isolated']) {
             $declaration['isolation_address'] = __('app.Main address');
-        } else {
-            if (count($declaration['isolation_addresses']) > 0) {
-                $firstIsolationAddress = $declaration['isolation_addresses'][0];
-                $declaration['isolation_address'] = __('app.City') . ' ' .
-                    $firstIsolationAddress['city'] . ' ' .
-                    __('app.Street') . ' ' .
-                    $firstIsolationAddress['street'] . ' ' .
-                    __('app.Number') . ' ' .
-                    $firstIsolationAddress['number'] . ' ' .
-                    __('app.Block') . ' ' .
-                    $firstIsolationAddress['bloc'] . ' ' .
-                    __('app.Entry') . ' ' .
-                    $firstIsolationAddress['entry'] . ' ' .
-                    __('app.Apartment') . ' ' .
-                    $firstIsolationAddress['apartment'] . ' ' .
-                    __('app.County') . ' ' .
-                    $firstIsolationAddress['county'];
-            }
+        } else if (count($declaration['isolation_addresses']) > 0) {
+            $firstIsolationAddress            = $declaration['isolation_addresses'][0];
+            $declaration['isolation_address'] = __('app.City') . ' ' .
+                $firstIsolationAddress['city'] . ' ' .
+                __('app.Street') . ' ' .
+                $firstIsolationAddress['street'] . ' ' .
+                __('app.Number') . ' ' .
+                $firstIsolationAddress['number'] . ' ' .
+                __('app.Block') . ' ' .
+                $firstIsolationAddress['bloc'] . ' ' .
+                __('app.Entry') . ' ' .
+                $firstIsolationAddress['entry'] . ' ' .
+                __('app.Apartment') . ' ' .
+                $firstIsolationAddress['apartment'] . ' ' .
+                __('app.County') . ' ' .
+                $firstIsolationAddress['county'];
         }
-        $declaration['fever'] = in_array('fever', $declaration['symptoms']) ?? true;
-        $declaration['swallow'] = in_array('swallow', $declaration['symptoms']) ?? true;
-        $declaration['breath'] = in_array('breath', $declaration['symptoms']) ?? true;
-        $declaration['cough'] = in_array('cough', $declaration['symptoms']) ?? true;
+        $declaration['fever']     = in_array('fever', $declaration['symptoms'], true) ?? true;
+        $declaration['swallow']   = in_array('swallow', $declaration['symptoms'], true) ?? true;
+        $declaration['breath']    = in_array('breath', $declaration['symptoms'], true) ?? true;
+        $declaration['cough']     = in_array('cough', $declaration['symptoms'], true) ?? true;
         $declaration['itinerary'] = '';
         if (count($declaration['itinerary_country_list']) > 0) {
             foreach ($declaration['itinerary_country_list'] as $country) {
-                $visitedCountries[] = $countries[$country];
+                $visitedCountries[]       = $countries[$country];
                 $declaration['itinerary'] .= '<strong>' . $countries[$country] . '</strong>, ';
             }
             $declaration['itinerary'] = substr($declaration['itinerary'], 0, -2);
@@ -297,34 +292,34 @@ class Declaration
         }
         $declaration['is_dsp_before_border'] = ($declaration['border_checkpoint'] &&
             $declaration['border_checkpoint']['is_dsp_before_border'] === true) ? 1 : 0;
-        $declaration['current_date'] = ($locale === 'ro') ? Carbon::now()->format('d-m-Y') :
+        $declaration['current_date']         = ($locale === 'ro') ? Carbon::now()->format('d-m-Y') :
             Carbon::now()->format('m/d/Y');
 
-        $formatedResult['pdf_data'] = [
-            'locale' => $locale,
-            'code' => $declaration['code'],
-            'measure' => [
-                'hospital' => false,
+        $formattedResult['pdf_data'] = [
+            'locale'             => $locale,
+            'code'               => $declaration['code'],
+            'measure'            => [
+                'hospital'   => false,
                 'quarantine' => false,
-                'isolation' => false
+                'isolation'  => false
             ],
-            'lastName' => $declaration['name'],
-            'firstName' => $declaration['surname'],
-            'idCardNumber' => $declaration['cnp'],
-            'dateOfBirth' => [
-                'year' => $declaration['birth_date_year'],
+            'lastName'           => $declaration['name'],
+            'firstName'          => $declaration['surname'],
+            'idCardNumber'       => $declaration['cnp'],
+            'dateOfBirth'        => [
+                'year'  => $declaration['birth_date_year'],
                 'month' => $declaration['birth_date_month'],
-                'day' => $declaration['birth_date_day']
+                'day'   => $declaration['birth_date_day']
             ],
-            'countryDeparture' => $declaration['travelling_from_country'],
+            'countryDeparture'   => $declaration['travelling_from_country'],
             'destinationAddress' => $declaration['isolation_address'],
-            'phoneNumber' => $declaration['phone'],
-            'documentDate' => $declaration['current_date']
+            'phoneNumber'        => $declaration['phone'],
+            'documentDate'       => $declaration['current_date']
         ];
 
-        $formatedResult['declaration'] = $declaration;
+        $formattedResult['declaration'] = $declaration;
 
-        return $formatedResult;
+        return $formattedResult;
     }
 
     /**
