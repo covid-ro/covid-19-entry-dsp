@@ -19,7 +19,7 @@
                                placeholder="{{ __('app.Declaration Code') }}"
                                aria-label="Declaration code"/>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-dark btn-top" type="button">
+                            <button class="btn btn-outline-dark btn-top" type="submit">
                                 {{ __('app.Search') }}</button>
                         </div>
                     </div>
@@ -135,15 +135,6 @@
             @endif
         </div>
         <script type="text/javascript">
-            $(document).ready(function() {
-                $(window).keydown(function(event){
-                    if(event.keyCode == 13) {
-                        event.preventDefault();
-                        return false;
-                    }
-                });
-            });
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
