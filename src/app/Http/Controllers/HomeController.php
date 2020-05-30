@@ -6,15 +6,16 @@ use App\Checkpoint;
 use App\Declaration;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use PeterColes\Countries\CountriesFacade;
+use RuntimeException;
 
 class HomeController extends Controller
 {
@@ -32,40 +33,40 @@ class HomeController extends Controller
      * Show the application dashboard.
      *
      * @param Request $request
+     *
      * @return Factory|View
      */
     public function index(Request $request)
     {
-        $perPage = ($request->session()->get('per-page')) ?
-            $request->session()->get('per-page') :
+        $perPage = ($request->session()->get('per-page')) ?:
             env('DECLARATIONS_PER_PAGE');
 
-            $declarations = Declaration::all(
-                Declaration::API_DECLARATION_URL(),
-                ['page' => $request->query('page'), 'per_page' => $perPage]
-            );
+        $declarations = Declaration::all(
+            Declaration::API_DECLARATION_URL(),
+            ['page' => $request->query('page'), 'per_page' => $perPage]
+        );
 
-            if(!is_object($declarations) || count($declarations->items()) < 1) {
-                session()->flash('type', 'danger');
-                session()->flash('message', $declarations);
-                $declarations = [];
-            }
+        if (!is_object($declarations) || count($declarations->items()) < 1) {
+            session()->flash('type', 'danger');
+            session()->flash('message', $declarations);
+            $declarations = [];
+        }
 
-            return view('home')->with(
-                [
-                    'declarations' => $declarations,
-                    'perPageValues' => explode(',', env('DECLARATIONS_PER_PAGE_VALUES')),
-                    'perPage' => $perPage
-                ]);
+        return view('home')->with(
+            [
+                'declarations'  => $declarations,
+                'perPageValues' => explode(',', env('DECLARATIONS_PER_PAGE_VALUES')),
+                'perPage'       => $perPage
+            ]);
     }
 
     /**
      * Show the declaration.
      *
-     * @param string $code
+     * @param string  $code
      * @param Request $request
      *
-     * @return Factory|View
+     * @return Application|Factory|View
      */
     public function show(string $code, Request $request)
     {
@@ -82,9 +83,9 @@ class HomeController extends Controller
             if (!is_array($declaration)) {
                 session()->flash('type', 'danger');
                 session()->flash('message', $declaration);
-                $formatedDeclaration['declaration'] = [];
+                $formattedDeclaration['declaration'] = [];
             } else {
-                $formatedDeclaration = Declaration::getDeclarationCollectionFormatted(
+                $formattedDeclaration = Declaration::getDeclarationCollectionFormatted(
                     $declaration,
                     $countries,
                     app()->getLocale()
@@ -94,18 +95,18 @@ class HomeController extends Controller
             return view(
                 'declaration',
                 [
-                    'declaration' => $formatedDeclaration['declaration'],
-                    'pdfData' => json_encode($formatedDeclaration['pdf_data']),
-                    'signature' => $formatedDeclaration['signature'],
-                    'qrCode' => $formatedDeclaration['qr_code']
+                    'declaration' => $formattedDeclaration['declaration'],
+                    'pdfData'     => json_encode($formattedDeclaration['pdf_data']),
+                    'signature'   => $formattedDeclaration['signature'],
+                    'qrCode'      => $formattedDeclaration['qr_code']
                 ]
             );
 
-        } else {
-            session()->flash('type', 'danger');
-            session()->flash('message', __('app.Declaration code is not defined'));
-            return redirect()->back();
         }
+
+        session()->flash('type', 'danger');
+        session()->flash('message', __('app.Declaration code is not defined'));
+        return redirect()->back();
     }
 
     /**
@@ -167,24 +168,24 @@ class HomeController extends Controller
      *
      * @return JsonResponse
      */
-    public function postSearchDeclaration(Request $request)
+    public function postSearchDeclaration(Request $request): ?JsonResponse
     {
         try {
             if ($request->input('code')) {
                 $code = $this->sanitizeInput($request->input('code'), ' ');
 
-                if (substr($code, 0, 2) === 'Er') {
-                    throw new Exception($code);
+                if (strpos($code, 'Er') === 0) {
+                    throw new RuntimeException($code);
                 }
 
                 $declarations = Declaration::find(Declaration::API_DECLARATION_URL(), $code, true);
 
                 if (!is_array($declarations)) {
-                    throw new Exception($declarations);
+                    throw new RuntimeException($declarations);
                 }
 
                 if (count($declarations) < 1) {
-                    throw new Exception(__('app.No declaration with this code'));
+                    throw new RuntimeException(__('app.No declaration with this code'));
                 }
 
                 $errorsMessage = '';
@@ -206,11 +207,11 @@ class HomeController extends Controller
                     } else {
                         foreach ($declarations as $declaration) {
                             if ($declaration['border_checkpoint']) {
-                                if (Auth::user()->checkpoint != $declaration['border_checkpoint']['id']) {
+                                if (Auth::user()->checkpoint !== $declaration['border_checkpoint']['id']) {
                                     $errorsMessage .= __('app.The person chose another border checkpoint.') . '<br/ >';
                                 } else {
                                     if ($declaration['border_crossed_at'] && !$declaration['border_validated_at']) {
-                                        $crossedAt = Carbon::parse($declaration['border_crossed_at'])->format('d-m-Y H:i:s');
+                                        $crossedAt     = Carbon::parse($declaration['border_crossed_at'])->format('d-m-Y H:i:s');
                                         $errorsMessage .= __(
                                                 'app.The person crossed border checkpoint at :crossedAt but was not validated yet.',
                                                 ['crossedAt' => $crossedAt]
@@ -218,11 +219,11 @@ class HomeController extends Controller
                                     } else {
                                         if ($declaration['dsp_validated_at'] && $declaration['dsp_user_name'] !== Auth::user()->username) {
                                             $dspValidatedAt = Carbon::parse($declaration['border_validated_at'])->format('d-m-Y H:i:s');
-                                            $errorsMessage .= __(
+                                            $errorsMessage  .= __(
                                                     'app.The declaration was validated at :dspValidatedAt by another DSP user [:userName].',
                                                     [
                                                         'dspValidatedAt' => $dspValidatedAt,
-                                                        'userName' => $declaration['dsp_user_name']
+                                                        'userName'       => $declaration['dsp_user_name']
                                                     ]
                                                 ) . '<br/ >';
                                         }
@@ -238,18 +239,18 @@ class HomeController extends Controller
                     }
                 }
 
-                if (strlen($errorsMessage) < 1) {
+                if ($errorsMessage === '') {
                     return response()->json(
                         [
                             'success' => $declarations
                         ]
                     );
-                } else {
-                    throw new Exception(trim($errorsMessage));
                 }
-            } else {
-                throw new Exception(__('app.There is no code sent.'));
+
+                throw new RuntimeException(trim($errorsMessage));
             }
+
+            throw new RuntimeException(__('app.There is no code sent.'));
         } catch (Exception $exception) {
             return response()->json(
                 [
@@ -267,18 +268,19 @@ class HomeController extends Controller
      *
      * @return string
      */
-    public function sanitizeInput(string $inputValue, string $splitter = null): string {
+    public function sanitizeInput(string $inputValue, string $splitter = null): string
+    {
         try {
-            if(strlen($inputValue) < 1) {
-                throw new Exception(__('app.No input for sanitize provided'));
+            if ($inputValue === '') {
+                throw new RuntimeException(__('app.No input for sanitize provided'));
             }
 
             if ($splitter) {
                 $tmpArray = explode($splitter, filter_var(trim($inputValue), FILTER_SANITIZE_STRING));
                 return $tmpArray[0];
-            } else {
-                return filter_var(trim($inputValue), FILTER_SANITIZE_STRING);
             }
+
+            return filter_var(trim($inputValue), FILTER_SANITIZE_STRING);
 
         } catch (Exception $exception) {
             return $exception->getMessage();
@@ -292,18 +294,18 @@ class HomeController extends Controller
      *
      * @return JsonResponse
      */
-    public function postRegisterDeclaration(Request $request)
+    public function postRegisterDeclaration(Request $request): ?JsonResponse
     {
         try {
             if ($request->input('code')) {
-                $code = $request->input('code');
-                $dspMeasure = $request->input('measure');
+                $code              = $request->input('code');
+                $dspMeasure        = $request->input('measure');
                 $isDspBeforeBorder = $request->input('is_dsp');
-                $userName = Auth::user()->username;
-                $errorsMessage = '';
+                $userName          = Auth::user()->username;
+                $errorsMessage     = '';
 
                 if (!$dspMeasure) {
-                    throw new Exception(__('app.DSP measure error'));
+                    throw new RuntimeException(__('app.DSP measure error'));
                 }
 
                 $registerDeclaration = Declaration::registerDeclaration(
@@ -318,19 +320,19 @@ class HomeController extends Controller
                     $errorsMessage .= $registerDeclaration;
                 }
 
-                if (strlen($errorsMessage) < 1) {
+                if ($errorsMessage === '') {
                     return response()->json(
                         [
                             'success' => $registerDeclaration,
                             'measure' => $dspMeasure
                         ]
                     );
-                } else {
-                    throw new Exception(trim($errorsMessage));
                 }
-            } else {
-                throw new Exception(__('app.There is no code sent.'));
+
+                throw new RuntimeException(trim($errorsMessage));
             }
+
+            throw new RuntimeException(__('app.There is no code sent.'));
         } catch (Exception $exception) {
             return response()->json(
                 [
