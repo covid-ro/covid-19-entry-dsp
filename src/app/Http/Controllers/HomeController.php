@@ -66,7 +66,7 @@ class HomeController extends Controller
      * @param string  $code
      * @param Request $request
      *
-     * @return Application|Factory|View
+     * @return Application|Factory|View|JsonResponse
      */
     public function show(string $code, Request $request)
     {
@@ -90,6 +90,15 @@ class HomeController extends Controller
                     $countries,
                     app()->getLocale()
                 );
+            }
+
+            if ($request->ajax()) { // Used for AJAX calls
+                return response()->json([
+                    'declaration' => $formattedDeclaration['declaration'],
+                    'pdfData'     => json_encode($formattedDeclaration['pdf_data']),
+                    'signature'   => $formattedDeclaration['signature'],
+                    'qrCode'      => $formattedDeclaration['qr_code']
+                ]);
             }
 
             return view(
