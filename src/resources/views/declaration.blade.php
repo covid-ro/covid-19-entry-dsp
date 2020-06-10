@@ -258,11 +258,11 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    @if (strlen($signature) > 0)
-                                                        <img src="{{ $signature }}" alt="" title=""/>
-                                                    @else
+{{--                                                    @if (strlen($signature) > 0)--}}
+{{--                                                        <img src="{{ $signature }}" alt="" title=""/>--}}
+{{--                                                    @else--}}
                                                         ________________________________
-                                                    @endif
+{{--                                                    @endif--}}
                                                 </td>
                                             </tr>
                                         </table>
