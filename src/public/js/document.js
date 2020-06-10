@@ -29,7 +29,7 @@ Document.prototype.create = function (data, signature, qrcode, output) {
 
     this.fill(data);
 
-    this.addSignature(signature);
+    //this.addSignature(signature);
 
     this.addQrCode(qrcode);
 
@@ -158,15 +158,15 @@ Document.prototype.draw = function () {
 Document.prototype.fill = function (data) {
 
     // first rectangle
-    if (data.measure.hospital) {
-        this.doc.text('X', 12, 35.5);
-    }
-    if (data.measure.quarantine) {
-        this.doc.text('X', 52, 35.5);
-    }
-    if (data.measure.isolation) {
-        this.doc.text('X', 102, 35.5);
-    }
+    // if (data.measure.hospital) {
+    //     this.doc.text('X', 12, 35.5);
+    // }
+    // if (data.measure.quarantine) {
+    //     this.doc.text('X', 52, 35.5);
+    // }
+    // if (data.measure.isolation) {
+    //     this.doc.text('X', 102, 35.5);
+    // }
 
     // second rectangle
     this.doc.text(data.lastName, 55, 50, { align: 'center' });
