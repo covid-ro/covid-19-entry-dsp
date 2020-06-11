@@ -194,19 +194,7 @@
                                     $('#search-results-table tbody').append(html);
                                 });
                             } else {
-                                $('#search-results-content').hide();
-
-                                $.ajax({
-                                    type: 'GET',
-                                    url: "/declaratie/" + data.success[0].code,
-                                    data: {refresh: true},
-                                    success: function (data) {
-                                        let doc = new Document();
-                                        doc.pdfToIframe($.parseJSON(data.pdfData), data.signature, data.qrCode);
-
-                                        $('#declaration-iframe-pdf').removeClass('d-none');
-                                    }
-                                });
+                                showiFramedDeclaration(data.success[0].code);
                             }
                         }else{
                             searchResultsCard.hide();
@@ -225,13 +213,16 @@
 
             $(document).on('click', '.view-declaration-details', function(e) {
                 e.preventDefault();
+                showiFramedDeclaration($(this).data('declaration-code'));
+            });
 
+            function showiFramedDeclaration(code) {
                 $('#search-results-content').hide();
                 $('#search-results').hide();
 
                 $.ajax({
                     type: 'GET',
-                    url: "/declaratie/" + $(this).data('declaration-code'),
+                    url: "/declaratie/" + code,
                     data: {refresh: true},
                     success: function (data) {
                         let doc = new Document();
@@ -240,8 +231,7 @@
                         $('#declaration-iframe-pdf').removeClass('d-none');
                     }
                 });
-
-            });
+            }
 
             function printAlertMsg (msg, type) {
                 $('.ajax-msg').find('span#ajax-text-message').html(msg);
