@@ -159,7 +159,7 @@ class Declaration
      * @param string $url
      * @param string $code
      * @param string $username
-     * @param string $measure
+     * @param string|null $measure
      * @param int    $isDspBeforeBorder
      *
      * @return mixed|string
@@ -168,7 +168,7 @@ class Declaration
         string $url,
         string $code,
         string $username,
-        string $measure,
+        string $measure = null,
         int $isDspBeforeBorder = 0
     )
     {

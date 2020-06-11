@@ -313,9 +313,9 @@ class HomeController extends Controller
                 $userName          = Auth::user()->username;
                 $errorsMessage     = '';
 
-                if (!$dspMeasure) {
-                    throw new RuntimeException(__('app.DSP measure error'));
-                }
+//                if (!$dspMeasure) {
+//                    throw new RuntimeException(__('app.DSP measure error'));
+//                }
 
                 $registerDeclaration = Declaration::registerDeclaration(
                     Declaration::API_DECLARATION_URL(),
