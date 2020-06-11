@@ -220,6 +220,9 @@
                 $('#search-results-content').hide();
                 $('#search-results').hide();
 
+                $('#code').focus();
+                $('#code').val('');
+
                 $.ajax({
                     type: 'GET',
                     url: "/declaratie/" + code,
@@ -234,7 +237,7 @@
                             url: "{{ route('register-declaration') }}",
                             data: {
                                 code: data.declaration.code,
-                                measure: 'isolation',
+                                // measure: 'isolation',
                                 is_dsp: data.declaration.is_dsp_before_border
                             }
                         });
