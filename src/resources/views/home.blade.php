@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@section('js_scripts')
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/document-font-bold.js' )}}"></script>
+    <script type="text/javascript" src="{{ asset('js/document-font-normal.js' )}}"></script>
+    <script type="text/javascript" src="{{ asset('js/document-trans.js' )}}"></script>
+    <script type="text/javascript" src="{{ asset('js/document.js' )}}"></script>
+@endsection
+
 @section('content')
     <div class="container">
         @if (session('message'))
@@ -61,7 +69,7 @@
 
             @if (!empty($declarations) && count($declarations) > 0 )
             <div class="col-md-12">
-                <div class="card">
+                <div class="card" id="search-results-content">
                     <div class="card-header">
                         {{ __('app.Dashboard') }}
                         <div class="float-right">
@@ -123,7 +131,7 @@
                                     <td>{{ $declaration['border_validated_at'] ?? '-' }}</td>
                                     <td>{{ $declaration['dsp_validated_at'] ?? '-' }}</td>
                                     <td>{{ $declaration['phone'] }}</td>
-                                    <td><a href="{{ $declaration['url'] }}">{{ __('app.View Details') }}</a></td>
+                                    <td><a href="#" class="view-declaration-details" data-declaration-code="{{ $declaration['code'] }}">{{ __('app.View Details') }}</a></td>
                                 </tr>
                             @endforeach
                             </tbody>
@@ -133,7 +141,8 @@
                 </div>
             </div>
             @endif
-        </div>
+
+            <div class="col-md-12 d-none" id="declaration-iframe-pdf" style="height: 675px"></div>
         <script type="text/javascript">
             $.ajaxSetup({
                 headers: {
@@ -142,7 +151,15 @@
             });
             $('#search-declaration button').click(function(e){
                 e.preventDefault();
+                $('#declaration-iframe-pdf').html('').addClass('d-none');
+
                 let code = $('#code').val();
+
+                if (0 === code.length) {
+                    window.location.href = '/';
+                    return;
+                }
+
                 let searchResultsCard = $('#search-results');
                 $('#search-results-table tbody').html('');
                 $.ajax({
@@ -152,6 +169,9 @@
                     success:function(data){
                         if($.isEmptyObject(data.error)){
                             if(data.success.length > 1) {
+                                $('#search-results-content').hide();
+                                $('#search-results').hide();
+
                                 searchResultsCard.show();
                                 $.each(data.success, function (index, value) {
                                     let html = '<tr>';
@@ -166,7 +186,7 @@
                                         '</td>';
                                     html += '<td>' + value.phone + '</td>';
                                     html += '<td>' +
-                                        '<a href="/declaratie/' + value.code + '">' +
+                                        '<a href="#" class="view-declaration-details" data-declaration-code="' + value.code + '">' +
                                         "{{ __('app.View Details') }}" +
                                         '</a>' +
                                         '</td>';
@@ -174,7 +194,7 @@
                                     $('#search-results-table tbody').append(html);
                                 });
                             } else {
-                                window.location.href = "/declaratie/" + data.success[0].code;
+                                showiFramedDeclaration(data.success[0].code);
                             }
                         }else{
                             searchResultsCard.hide();
@@ -190,6 +210,38 @@
                     }
                 });
             });
+
+            $(document).on('click', '.view-declaration-details', function(e) {
+                e.preventDefault();
+                showiFramedDeclaration($(this).data('declaration-code'));
+            });
+
+            function showiFramedDeclaration(code) {
+                $('#search-results-content').hide();
+                $('#search-results').hide();
+
+                $.ajax({
+                    type: 'GET',
+                    url: "/declaratie/" + code,
+                    data: {refresh: true},
+                    success: function (data) {
+                        new Document().pdfToIframe($.parseJSON(data.pdfData), data.signature, data.qrCode);
+
+                        $('#declaration-iframe-pdf').removeClass('d-none');
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{ route('register-declaration') }}",
+                            data: {
+                                code: data.declaration.code,
+                                measure: 'isolation',
+                                is_dsp: data.declaration.is_dsp_before_border
+                            }
+                        });
+                    }
+                });
+            }
+
             function printAlertMsg (msg, type) {
                 $('.ajax-msg').find('span#ajax-text-message').html(msg);
                 $('.ajax-msg').addClass('alert-'+type);

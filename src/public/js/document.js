@@ -66,6 +66,15 @@ Document.prototype.preview = function (data, signature, qrcode) {
     // el.click();
 };
 
+Document.prototype.pdfToIframe = function (data, signature, qrcode) {
+    let content = this.create(data, signature, qrcode, 'blob');
+
+    let file = new Blob([content], { type: 'application/pdf' });
+    let fileURL = URL.createObjectURL(file);
+
+    $('#declaration-iframe-pdf').html('<iframe src="' + fileURL + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>')
+}
+
 Document.prototype.getName = function(data) {
 
     let date = new Date();
