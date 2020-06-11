@@ -225,10 +225,19 @@
                     url: "/declaratie/" + code,
                     data: {refresh: true},
                     success: function (data) {
-                        let doc = new Document();
-                        doc.pdfToIframe($.parseJSON(data.pdfData), data.signature, data.qrCode);
+                        new Document().pdfToIframe($.parseJSON(data.pdfData), data.signature, data.qrCode);
 
                         $('#declaration-iframe-pdf').removeClass('d-none');
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{ route('register-declaration') }}",
+                            data: {
+                                code: data.declaration.code,
+                                measure: 'isolation',
+                                is_dsp: data.declaration.is_dsp_before_border
+                            }
+                        });
                     }
                 });
             }
