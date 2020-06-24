@@ -1,3 +1,19 @@
+## [1.3.2] - 2020-06-24
+
+### Modify
+- home.blade.php - main view
+
+## [1.3.1] - 2020-06-11
+
+### Modify
+- Remove default measure 'isolation' when registering the declaration.
+
+## [1.3.0] - 2020-06-11
+
+### Modify
+- Improving user experience for search and print declarations
+- Merge pull request #103 from citizennext/search-and-print
+
 ## [1.2.2] - 2020-05-26
 
 ### Modify
