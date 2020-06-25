@@ -45,14 +45,6 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('home') }}"> {{ __('app.Declarations list') }}</a>
-                        </li>
-
-                        <!-- Authentication Links -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ env('WEB_FORM_URL', '#') }}" target="_blank" rel="noopener">{{ __('app.Complete declaration') }}</a>
-                        </li>
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('auth.Login') }}</a>
@@ -63,6 +55,11 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('home') }}"> {{ __('app.Declarations search') }}</a>
+                            </li>
+
+                            <!-- Authentication Links -->
                             @if ( Auth::user()->username === env('ADMIN_USER'))
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle user-admin-top-nav" href="#" role="button"

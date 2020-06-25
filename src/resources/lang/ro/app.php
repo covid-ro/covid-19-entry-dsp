@@ -185,5 +185,6 @@ return [
     'Declaration code is not defined' => 'Codul declarației nu a fost definit',
     'There is no Declaration' => 'Nu există declarații in baza de date',
     'Developed by' => 'Dezvoltat de <a target="_blank" href="https://citizennext.ro">Citizen Next</a>
-        și <a target="_blank" href="https://sts.ro">Serviciul de Telecomunicații Speciale'
+        și <a target="_blank" href="https://sts.ro">Serviciul de Telecomunicații Speciale',
+    'Declarations search' => 'Căutare declarație'
 ];
