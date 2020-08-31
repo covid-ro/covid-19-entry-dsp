@@ -149,6 +149,7 @@
 
             <div class="col-md-12 d-none" id="declaration-iframe-pdf" style="height: 675px"></div>
             <script type="text/javascript">
+                $('#code').focus(); // issue #106
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
