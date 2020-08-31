@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('js_scripts')
-    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+    <script src="https://unpkg.com/jspdf@1.5.3/dist/jspdf.min.js"></script>
     <script type="text/javascript" src="{{ asset('js/document-font-bold.js' )}}"></script>
     <script type="text/javascript" src="{{ asset('js/document-font-normal.js' )}}"></script>
     <script type="text/javascript" src="{{ asset('js/document-trans.js' )}}"></script>
